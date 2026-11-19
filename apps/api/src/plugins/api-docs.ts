@@ -16,6 +16,7 @@ export async function registerApiDocs(app: FastifyInstance) {
       },
       tags: [
         { name: "health", description: "Liveness and readiness checks" },
+        { name: "accounts", description: "Account management" },
       ],
     },
   });

@@ -2,6 +2,7 @@ import Fastify from "fastify";
 
 import { Config } from "./env.ts";
 import { registerApiDocs } from "./plugins/api-docs.ts";
+import { accountRoutes } from "./routes/accounts.ts";
 import { healthRoutes } from "./routes/health.ts";
 
 export async function buildApp() {
@@ -11,6 +12,7 @@ export async function buildApp() {
   await registerApiDocs(app);
 
   await app.register(healthRoutes);
+  await app.register(accountRoutes, { prefix: "/accounts" });
 
   return app;
 }
