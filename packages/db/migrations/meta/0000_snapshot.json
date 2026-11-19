@@ -54,16 +54,12 @@
         "accounts_email_unique": {
           "name": "accounts_email_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "email"
-          ]
+          "columns": ["email"]
         },
         "accounts_api_key_hash_unique": {
           "name": "accounts_api_key_hash_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "api_key_hash"
-          ]
+          "columns": ["api_key_hash"]
         }
       },
       "policies": {},
