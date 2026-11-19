@@ -4,7 +4,8 @@
   "private": true,
   "scripts": {
     "build": "pnpm -r run build",
-    "dev": "pnpm -r --parallel run dev",
+    "dev:api": "pnpm --filter @hookrelay/api dev",
+    "dev:worker": "pnpm --filter @hookrelay/worker dev",
     "lint": "oxlint",
     "test": "pnpm -r run test",
     "typecheck": "pnpm -r run typecheck",
