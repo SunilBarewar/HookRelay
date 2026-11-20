@@ -15,6 +15,11 @@ export function registerApiDocs(app: FastifyInstance) {
         description: "Webhook delivery platform API",
         version: "0.0.0",
       },
+      components: {
+        securitySchemes: {
+          bearerAuth: { type: "http", scheme: "bearer", bearerFormat: "JWT" },
+        },
+      },
       tags: [
         { name: "health", description: "Liveness and readiness checks" },
         { name: "accounts", description: "Account management" },
