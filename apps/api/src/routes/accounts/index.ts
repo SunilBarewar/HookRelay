@@ -3,6 +3,7 @@ import type { FastifyReply } from "fastify";
 import type { FastifyPluginAsyncZod } from "fastify-type-provider-zod";
 import { z } from "zod";
 import { createAccount } from "./create-account.ts";
+import { login } from "./login.ts";
 
 const notImplemented = {
   [HttpStatus.NOT_IMPLEMENTED]: z.object({ message: z.string() }),
@@ -17,6 +18,7 @@ export const accountRoutes: FastifyPluginAsyncZod = async (app) => {
   };
 
   createAccount(app);
+  login(app);
 
   app.get(
     "/:id",

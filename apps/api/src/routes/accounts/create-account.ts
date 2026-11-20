@@ -3,8 +3,9 @@ import bcrypt from "bcrypt";
 import type { FastifyInstance } from "fastify";
 import type { ZodTypeProvider } from "fastify-type-provider-zod";
 
+import { signAccountToken } from "@/lib/jwt.ts";
 import { ErrorResponse } from "@/schemas/error.ts";
-import { CreateAccountBody, CreateAccountResponse } from "./accounts-schemas.ts";
+import { AuthResponse, CredentialsBody } from "./accounts-schemas.ts";
 import { ConflictError, ErrorCode, HttpStatus } from "@hookrelay/shared";
 
 const SALT_ROUNDS = 10;
@@ -16,9 +17,9 @@ export function createAccount(app: FastifyInstance) {
       schema: {
         tags: ["accounts"],
         summary: "Create an account",
-        body: CreateAccountBody,
+        body: CredentialsBody,
         response: {
-          [HttpStatus.OK]: CreateAccountResponse,
+          [HttpStatus.OK]: AuthResponse,
           [HttpStatus.CONFLICT]: ErrorResponse,
           [HttpStatus.UNPROCESSABLE_ENTITY]: ErrorResponse,
         },
@@ -35,9 +36,10 @@ export function createAccount(app: FastifyInstance) {
 
       const hashedPassword = await bcrypt.hash(password, SALT_ROUNDS);
 
-      await insertAccount({ email, password: hashedPassword });
+      const account = await insertAccount({ email, password: hashedPassword });
+      const token = await signAccountToken(account.id);
 
-      return reply.code(HttpStatus.OK).send({ message: "Account created!", email });
+      return reply.code(HttpStatus.OK).send({ message: "Account created!", email, token });
     },
   );
 }
