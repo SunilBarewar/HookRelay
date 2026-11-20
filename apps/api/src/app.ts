@@ -3,9 +3,9 @@ import { serializerCompiler, validatorCompiler } from "fastify-type-provider-zod
 
 import { Config } from "@/env.ts";
 import { registerApiDocs } from "@/plugins/api-docs.ts";
+import { registerAuth } from "@/plugins/auth.ts";
 import { registerErrorHandler } from "@/plugins/error-handler.ts";
-import { accountRoutes } from "@/routes/accounts/index.ts";
-import { healthRoutes } from "@/routes/health.ts";
+import { registerRoutes } from "@/routes/index.ts";
 
 export function buildApp() {
   const app = Fastify({ logger: { level: Config.LOG_LEVEL } });
@@ -15,12 +15,12 @@ export function buildApp() {
   app.setSerializerCompiler(serializerCompiler);
 
   registerErrorHandler(app);
+  app.register(registerAuth);
 
   // Must be registered before the routes so they show up in the docs.
   registerApiDocs(app);
 
-  app.register(healthRoutes);
-  app.register(accountRoutes, { prefix: "/accounts" });
+  app.register(registerRoutes);
 
   return app;
 }
