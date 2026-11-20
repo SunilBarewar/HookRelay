@@ -1,4 +1,11 @@
-import { AppError, ConflictError, ValidationError, isAppError, isDevelopment } from "@hookrelay/shared";
+import {
+  AppError,
+  ConflictError,
+  ErrorCode,
+  HttpStatus,
+  ValidationError,
+  isAppError,
+} from "@hookrelay/shared";
 import type { FastifyError, FastifyInstance } from "fastify";
 import { ZodError } from "zod";
 
@@ -32,14 +39,14 @@ function toAppError(err: unknown): AppError | undefined {
   const pg = findPostgresError(err);
   if (pg?.code === PG_UNIQUE_VIOLATION) {
     return new ConflictError("Resource already exists", {
-      code: "ALREADY_EXISTS",
+      code: ErrorCode.ALREADY_EXISTS,
       details: pg.constraint_name ? { constraint: pg.constraint_name } : undefined,
       cause: err,
     });
   }
   if (pg?.code === PG_FOREIGN_KEY_VIOLATION) {
     return new ValidationError("Referenced resource does not exist", {
-      code: "INVALID_REFERENCE",
+      code: ErrorCode.INVALID_REFERENCE,
       cause: err,
     });
   }
@@ -50,12 +57,11 @@ function toAppError(err: unknown): AppError | undefined {
 /** Global error handler. Register before the routes. */
 export function registerErrorHandler(app: FastifyInstance) {
   app.setErrorHandler((err: FastifyError, request, reply) => {
-    if(isDevelopment())
     // Fastify's own JSON-schema validation (request body/params/querystring).
     if (err.validation) {
-      return reply.code(400).send({
+      return reply.code(HttpStatus.BAD_REQUEST).send({
         error: "BadRequestError",
-        code: "BAD_REQUEST",
+        code: ErrorCode.BAD_REQUEST,
         message: err.message,
         details: err.validation,
       });
@@ -63,12 +69,12 @@ export function registerErrorHandler(app: FastifyInstance) {
 
     const appError = toAppError(err);
     if (appError) {
-      if (appError.statusCode >= 500) request.log.error({ err }, "request failed");
+      if (appError.statusCode >= HttpStatus.INTERNAL_SERVER_ERROR) request.log.error({ err }, "request failed");
       return reply.code(appError.statusCode).send(appError.toJSON());
     }
 
     // Other Fastify errors with a 4xx status (bad JSON, 404 payload too large, ...).
-    if (err.statusCode && err.statusCode < 500) {
+    if (err.statusCode && err.statusCode < HttpStatus.INTERNAL_SERVER_ERROR) {
       return reply.code(err.statusCode).send({
         error: err.name,
         code: err.code,
@@ -78,17 +84,17 @@ export function registerErrorHandler(app: FastifyInstance) {
 
     // Unknown: log everything, leak nothing.
     request.log.error({ err }, "unhandled error");
-    return reply.code(500).send({
+    return reply.code(HttpStatus.INTERNAL_SERVER_ERROR).send({
       error: "InternalError",
-      code: "INTERNAL_ERROR",
+      code: ErrorCode.INTERNAL_ERROR,
       message: "Internal server error",
     });
   });
 
   app.setNotFoundHandler((request, reply) =>
-    reply.code(404).send({
+    reply.code(HttpStatus.NOT_FOUND).send({
       error: "NotFoundError",
-      code: "NOT_FOUND",
+      code: ErrorCode.NOT_FOUND,
       message: `Route ${request.method} ${request.url} not found`,
     }),
   );
