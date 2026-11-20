@@ -1,6 +1,6 @@
 import { pgTable, varchar, uuid, index } from "drizzle-orm/pg-core";
-import { id, timestamps } from "./columns";
-import { accounts } from "./accounts";
+import { id, timestamps } from "./columns.ts";
+import { accounts } from "./accounts.ts";
 import { relations } from "drizzle-orm";
 
 export const applications = pgTable(
@@ -25,3 +25,6 @@ export const accountAppRelations = relations(accounts, ({ many }) => ({
 export const applicationsRelations = relations(applications, ({ one }) => ({
   account: one(accounts, { fields: [applications.accountId], references: [accounts.id] }),
 }));
+
+export type NewApplication = typeof applications.$inferInsert;
+export type Application = typeof applications.$inferSelect;

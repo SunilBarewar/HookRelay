@@ -1,6 +1,7 @@
 import type { FastifyPluginAsyncZod } from "fastify-type-provider-zod";
 
 import { accountProtectedRoutes, accountPublicRoutes } from "./accounts/index.ts";
+import { applicationRoutes } from "./applications/index.ts";
 import { healthRoutes } from "./health.ts";
 
 /** Single place where every route module is registered (and given its URL prefix). */
@@ -14,5 +15,6 @@ export const registerRoutes: FastifyPluginAsyncZod = async (app) => {
     protectedApp.addHook("onRequest", protectedApp.authenticate);
 
     protectedApp.register(accountProtectedRoutes, { prefix: "/accounts" });
+    protectedApp.register(applicationRoutes, { prefix: "/applications" });
   });
 };
