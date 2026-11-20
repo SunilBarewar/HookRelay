@@ -1,7 +1,7 @@
 import { closeDatabase } from "@hookrelay/db";
 
-import { buildApp } from "./app.ts";
-import { Config } from "./env.ts";
+import { buildApp } from "@/app.ts";
+import { Config } from "@/env.ts";
 
 const app = buildApp();
 
