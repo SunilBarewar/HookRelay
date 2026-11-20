@@ -6,8 +6,8 @@ import type { FastifyInstance } from "fastify";
  * @fastify/swagger generates the OpenAPI spec from the route schemas,
  * Scalar renders it at /docs. Register before the routes.
  */
-export async function registerApiDocs(app: FastifyInstance) {
-  await app.register(swagger, {
+export function registerApiDocs(app: FastifyInstance) {
+  app.register(swagger, {
     openapi: {
       info: {
         title: "HookRelay API",
@@ -21,5 +21,5 @@ export async function registerApiDocs(app: FastifyInstance) {
     },
   });
 
-  await app.register(scalar, { routePrefix: "/docs" });
+  app.register(scalar, { routePrefix: "/docs" });
 }

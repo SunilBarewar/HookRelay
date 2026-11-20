@@ -3,7 +3,7 @@ import { closeDatabase } from "@hookrelay/db";
 import { buildApp } from "./app.ts";
 import { Config } from "./env.ts";
 
-const app = await buildApp();
+const app = buildApp();
 
 async function shutdown(signal: string) {
   app.log.info({ signal }, "shutting down");

@@ -6,16 +6,16 @@ import { registerErrorHandler } from "./plugins/error-handler.ts";
 import { accountRoutes } from "./routes/accounts.ts";
 import { healthRoutes } from "./routes/health.ts";
 
-export async function buildApp() {
+export function buildApp() {
   const app = Fastify({ logger: { level: Config.LOG_LEVEL } });
 
   registerErrorHandler(app);
 
   // Must be registered before the routes so they show up in the docs.
-  await registerApiDocs(app);
+  registerApiDocs(app);
 
-  await app.register(healthRoutes);
-  await app.register(accountRoutes, { prefix: "/accounts" });
+  app.register(healthRoutes);
+  app.register(accountRoutes, { prefix: "/accounts" });
 
   return app;
 }
