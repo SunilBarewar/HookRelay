@@ -1,6 +1,7 @@
 import swagger from "@fastify/swagger";
 import scalar from "@scalar/fastify-api-reference";
 import type { FastifyInstance } from "fastify";
+import { jsonSchemaTransform } from "fastify-type-provider-zod";
 
 /**
  * @fastify/swagger generates the OpenAPI spec from the route schemas,
@@ -19,6 +20,7 @@ export function registerApiDocs(app: FastifyInstance) {
         { name: "accounts", description: "Account management" },
       ],
     },
+    transform: jsonSchemaTransform,
   });
 
   app.register(scalar, { routePrefix: "/docs" });

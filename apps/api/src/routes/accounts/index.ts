@@ -1,23 +1,19 @@
-import type { FastifyPluginAsync, RouteHandlerMethod } from "fastify";
+import { HttpStatus } from "@hookrelay/shared";
+import type { FastifyReply } from "fastify";
+import type { FastifyPluginAsyncZod } from "fastify-type-provider-zod";
+import { z } from "zod";
 
 const notImplemented = {
-  501: {
-    type: "object",
-    properties: { message: { type: "string" } },
-    required: ["message"],
-  },
+  [HttpStatus.NOT_IMPLEMENTED]: z.object({ message: z.string() }),
 };
 
-const idParams = {
-  type: "object",
-  properties: { id: { type: "string", format: "uuid" } },
-  required: ["id"],
-};
+const idParams = z.object({ id: z.uuid() });
 
 // Sample routes only: handlers are stubs and respond 501 until implemented.
-export const accountRoutes: FastifyPluginAsync = async (app) => {
-  const todo: RouteHandlerMethod = async (_request, reply) =>
-    reply.code(501).send({ message: "Not implemented" });
+export const accountRoutes: FastifyPluginAsyncZod = async (app) => {
+  const todo = async (_request: unknown, reply: FastifyReply): Promise<void> => {
+    reply.code(HttpStatus.NOT_IMPLEMENTED).send({ message: "Not implemented" });
+  };
 
   app.post(
     "/",
@@ -25,14 +21,7 @@ export const accountRoutes: FastifyPluginAsync = async (app) => {
       schema: {
         tags: ["accounts"],
         summary: "Create an account",
-        body: {
-          type: "object",
-          properties: {
-            email: { type: "string", format: "email" },
-            password: { type: "string", minLength: 8 },
-          },
-          required: ["email", "password"],
-        },
+        body: z.object({ email: z.email(), password: z.string().min(8) }),
         response: notImplemented,
       },
     },

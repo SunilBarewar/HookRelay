@@ -1,23 +1,21 @@
-import { db, sql } from "@hookrelay/db";
-import type { FastifyPluginAsync } from "fastify";
+import { pingDatabase } from "@hookrelay/db";
+import { HttpStatus } from "@hookrelay/shared";
+import type { FastifyPluginAsyncZod } from "fastify-type-provider-zod";
+import { z } from "zod";
 
-const statusResponse = (status: string) => ({
-  type: "object",
-  properties: { status: { type: "string", enum: [status] } },
-  required: ["status"],
-});
+const statusResponse = <S extends string>(status: S) => z.object({ status: z.literal(status) });
 
-export const healthRoutes: FastifyPluginAsync = async (app) => {
+export const healthRoutes: FastifyPluginAsyncZod = async (app) => {
   app.get(
     "/health",
     {
       schema: {
         tags: ["health"],
         summary: "Liveness check",
-        response: { 200: statusResponse("ok") },
+        response: { [HttpStatus.OK]: statusResponse("ok") },
       },
     },
-    async () => ({ status: "ok" }),
+    async () => ({ status: "ok" as const }),
   );
 
   app.get(
@@ -26,16 +24,19 @@ export const healthRoutes: FastifyPluginAsync = async (app) => {
       schema: {
         tags: ["health"],
         summary: "Database connectivity check",
-        response: { 200: statusResponse("ok"), 503: statusResponse("unavailable") },
+        response: {
+          [HttpStatus.OK]: statusResponse("ok"),
+          [HttpStatus.SERVICE_UNAVAILABLE]: statusResponse("unavailable"),
+        },
       },
     },
     async (_request, reply) => {
       try {
-        await db.execute(sql`select 1`);
-        return { status: "ok" };
+        await pingDatabase();
+        return { status: "ok" as const };
       } catch (error) {
         app.log.error(error, "database health check failed");
-        return reply.code(503).send({ status: "unavailable" });
+        return reply.code(HttpStatus.SERVICE_UNAVAILABLE).send({ status: "unavailable" });
       }
     },
   );
