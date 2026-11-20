@@ -24,3 +24,37 @@ export async function findAccountById(id: string): Promise<Account | undefined> 
   const [account] = await db.select().from(accounts).where(eq(accounts.id, id)).limit(1);
   return account;
 }
+
+/** `password` must already be hashed. Only the provided fields are changed. */
+export type UpdateAccountInput = Partial<Pick<NewAccount, "email" | "password">>;
+
+/**
+ * Update an account and return the new row, or undefined if it doesn't exist.
+ * Throws the Postgres unique violation (23505) if the new email is taken.
+ */
+export async function updateAccount(
+  id: string,
+  input: UpdateAccountInput,
+): Promise<Account | undefined> {
+  const [account] = await db.update(accounts).set(input).where(eq(accounts.id, id)).returning();
+  return account;
+}
+
+/** Returns true if an account was deleted. */
+export async function deleteAccount(id: string): Promise<boolean> {
+  const deleted = await db
+    .delete(accounts)
+    .where(eq(accounts.id, id))
+    .returning({ id: accounts.id });
+  return deleted.length > 0;
+}
+
+/** Store the (already hashed) API key. Returns false if the account doesn't exist. */
+export async function setAccountApiKeyHash(id: string, apiKeyHash: string): Promise<boolean> {
+  const updated = await db
+    .update(accounts)
+    .set({ apiKeyHash })
+    .where(eq(accounts.id, id))
+    .returning({ id: accounts.id });
+  return updated.length > 0;
+}
