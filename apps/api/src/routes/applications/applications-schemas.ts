@@ -8,6 +8,14 @@ export const CreateApplicationBody = z.object({
   name: z.string().trim().min(1).max(255),
 });
 
+export const UpdateApplicationBody = z.object({
+  name: z.string().trim().min(1).max(255),
+});
+
+export const IdParams = z.object({ id: z.uuid() });
+
+export const MessageResponse = z.object({ message: z.string() });
+
 export const ApplicationResponse = z.object({
   id: z.uuid(),
   name: z.string(),
@@ -29,4 +37,10 @@ export const security = [{ bearerAuth: [] }];
 
 export const protectedErrorResponses = {
   [HttpStatus.UNAUTHORIZED]: ErrorResponse,
+};
+
+/** Responses for routes that act on a specific application. */
+export const applicationErrorResponses = {
+  ...protectedErrorResponses,
+  [HttpStatus.NOT_FOUND]: ErrorResponse,
 };
