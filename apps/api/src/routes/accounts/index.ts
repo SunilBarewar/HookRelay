@@ -2,6 +2,7 @@ import { HttpStatus } from "@hookrelay/shared";
 import type { FastifyReply } from "fastify";
 import type { FastifyPluginAsyncZod } from "fastify-type-provider-zod";
 import { z } from "zod";
+import { createAccount } from "./create-account.ts";
 
 const notImplemented = {
   [HttpStatus.NOT_IMPLEMENTED]: z.object({ message: z.string() }),
@@ -15,18 +16,7 @@ export const accountRoutes: FastifyPluginAsyncZod = async (app) => {
     reply.code(HttpStatus.NOT_IMPLEMENTED).send({ message: "Not implemented" });
   };
 
-  app.post(
-    "/",
-    {
-      schema: {
-        tags: ["accounts"],
-        summary: "Create an account",
-        body: z.object({ email: z.email(), password: z.string().min(8) }),
-        response: notImplemented,
-      },
-    },
-    todo,
-  );
+  createAccount(app);
 
   app.get(
     "/:id",
