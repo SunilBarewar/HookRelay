@@ -1,4 +1,8 @@
+import type { Account } from "@hookrelay/db";
+import { HttpStatus } from "@hookrelay/shared";
 import { z } from "zod";
+
+import { ErrorResponse } from "@/schemas/error.ts";
 
 /** Body for both creating an account and logging in. */
 export const CredentialsBody = z.object({
@@ -12,3 +16,50 @@ export const AuthResponse = z.object({
   email: z.email(),
   token: z.string(),
 });
+
+export const IdParams = z.object({ id: z.uuid() });
+
+/** Never includes the password hash or API key hash. */
+export const AccountResponse = z.object({
+  id: z.uuid(),
+  email: z.email(),
+  hasApiKey: z.boolean(),
+  createdAt: z.iso.datetime(),
+  updatedAt: z.iso.datetime(),
+});
+
+export function toAccountResponse(account: Account): z.infer<typeof AccountResponse> {
+  return {
+    id: account.id,
+    email: account.email,
+    hasApiKey: account.apiKeyHash !== null,
+    createdAt: account.createdAt.toISOString(),
+    updatedAt: account.updatedAt.toISOString(),
+  };
+}
+
+export const UpdateAccountBody = z
+  .object({
+    email: z.email().optional(),
+    password: z.string().min(8).optional(),
+  })
+  .refine((body) => body.email !== undefined || body.password !== undefined, {
+    message: "Provide at least one of: email, password",
+  });
+
+export const MessageResponse = z.object({ message: z.string() });
+
+export const ApiKeyResponse = z.object({
+  message: z.string(),
+  apiKey: z.string(),
+});
+
+/** Shown as a lock icon / "Authorize" box in the OpenAPI docs. */
+export const security = [{ bearerAuth: [] }];
+
+/** Responses every protected route can return. */
+export const protectedErrorResponses = {
+  [HttpStatus.UNAUTHORIZED]: ErrorResponse,
+  [HttpStatus.FORBIDDEN]: ErrorResponse,
+  [HttpStatus.NOT_FOUND]: ErrorResponse,
+};
