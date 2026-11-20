@@ -1,3 +1,6 @@
+import { ErrorCode } from "../constants/error-codes.ts";
+import { HttpStatus } from "../constants/http-status.ts";
+
 export interface AppErrorOptions {
   /** Machine-readable error code, e.g. "EMAIL_ALREADY_EXISTS". */
   code?: string;
@@ -18,8 +21,8 @@ export class AppError extends Error {
 
   constructor(
     message: string,
-    statusCode = 500,
-    { code = "INTERNAL_ERROR", details, cause }: AppErrorOptions = {},
+    statusCode: number = HttpStatus.INTERNAL_SERVER_ERROR,
+    { code = ErrorCode.INTERNAL_ERROR, details, cause }: AppErrorOptions = {},
   ) {
     super(message, { cause });
     this.name = new.target.name;
