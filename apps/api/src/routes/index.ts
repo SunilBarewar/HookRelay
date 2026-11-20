@@ -11,10 +11,13 @@ export const registerRoutes: FastifyPluginAsyncZod = async (app) => {
   app.register(accountPublicRoutes, { prefix: "/accounts" });
 
   // Protected routes: every module registered in this scope requires a valid JWT.
-  app.register(async (protectedApp) => {
-    protectedApp.addHook("onRequest", protectedApp.authenticate);
+  app.register(
+    async (protectedApp) => {
+      protectedApp.addHook("onRequest", protectedApp.authenticate);
 
-    protectedApp.register(accountProtectedRoutes, { prefix: "/accounts" });
-    protectedApp.register(applicationRoutes, { prefix: "/applications" });
-  });
+      protectedApp.register(accountProtectedRoutes, { prefix: "/accounts" });
+      protectedApp.register(applicationRoutes, { prefix: "/applications" });
+    },
+    { prefix: "/v1" },
+  );
 };
