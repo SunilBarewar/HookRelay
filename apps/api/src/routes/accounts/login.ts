@@ -6,6 +6,7 @@ import type { FastifyPluginAsyncZod } from "fastify-type-provider-zod";
 import { signAccountToken } from "@/lib/jwt.ts";
 import { ErrorResponse } from "@/schemas/error.ts";
 import { AuthResponse, CredentialsBody } from "./accounts-schemas.ts";
+import { verifyPassword } from "@/lib/password.ts";
 
 // Compared against when the email is unknown so response time doesn't reveal which emails exist.
 const DUMMY_HASH = bcrypt.hashSync("hookrelay-dummy-password", 10);
@@ -29,7 +30,7 @@ export const login: FastifyPluginAsyncZod = async (app) => {
       const { email, password } = request.body;
 
       const account = await findAccountByEmail(email);
-      const valid = await bcrypt.compare(password, account?.password ?? DUMMY_HASH);
+      const valid = await verifyPassword(password, account?.password ?? DUMMY_HASH);
 
       if (!account || !valid) {
         throw new UnauthorizedError("Invalid email or password", { code: ErrorCode.UNAUTHORIZED });
