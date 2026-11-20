@@ -1,8 +1,7 @@
 import { findAccountByEmail } from "@hookrelay/db";
 import { ErrorCode, HttpStatus, UnauthorizedError } from "@hookrelay/shared";
 import bcrypt from "bcrypt";
-import type { FastifyInstance } from "fastify";
-import type { ZodTypeProvider } from "fastify-type-provider-zod";
+import type { FastifyPluginAsyncZod } from "fastify-type-provider-zod";
 
 import { signAccountToken } from "@/lib/jwt.ts";
 import { ErrorResponse } from "@/schemas/error.ts";
@@ -11,8 +10,8 @@ import { AuthResponse, CredentialsBody } from "./accounts-schemas.ts";
 // Compared against when the email is unknown so response time doesn't reveal which emails exist.
 const DUMMY_HASH = bcrypt.hashSync("hookrelay-dummy-password", 10);
 
-export function login(app: FastifyInstance) {
-  app.withTypeProvider<ZodTypeProvider>().post(
+export const login: FastifyPluginAsyncZod = async (app) => {
+  app.post(
     "/login",
     {
       schema: {
@@ -41,4 +40,4 @@ export function login(app: FastifyInstance) {
       return reply.code(HttpStatus.OK).send({ message: "Logged in!", email, token });
     },
   );
-}
+};

@@ -1,17 +1,14 @@
 import { findAccountByEmail, insertAccount } from "@hookrelay/db";
-import bcrypt from "bcrypt";
-import type { FastifyInstance } from "fastify";
-import type { ZodTypeProvider } from "fastify-type-provider-zod";
+import type { FastifyPluginAsyncZod } from "fastify-type-provider-zod";
 
 import { signAccountToken } from "@/lib/jwt.ts";
+import { hashPassword } from "@/lib/password.ts";
 import { ErrorResponse } from "@/schemas/error.ts";
 import { AuthResponse, CredentialsBody } from "./accounts-schemas.ts";
 import { ConflictError, ErrorCode, HttpStatus } from "@hookrelay/shared";
 
-const SALT_ROUNDS = 10;
-
-export function createAccount(app: FastifyInstance) {
-  app.withTypeProvider<ZodTypeProvider>().post(
+export const createAccount: FastifyPluginAsyncZod = async (app) => {
+  app.post(
     "/",
     {
       schema: {
@@ -34,7 +31,7 @@ export function createAccount(app: FastifyInstance) {
         throw new ConflictError("Account already exists", { code: ErrorCode.ALREADY_EXISTS });
       }
 
-      const hashedPassword = await bcrypt.hash(password, SALT_ROUNDS);
+      const hashedPassword = await hashPassword(password);
 
       const account = await insertAccount({ email, password: hashedPassword });
       const token = await signAccountToken(account.id);
@@ -42,4 +39,4 @@ export function createAccount(app: FastifyInstance) {
       return reply.code(HttpStatus.OK).send({ message: "Account created!", email, token });
     },
   );
-}
+};
