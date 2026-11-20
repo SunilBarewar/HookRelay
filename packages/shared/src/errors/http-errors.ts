@@ -36,7 +36,10 @@ export class ConflictError extends AppError {
 
 export class ValidationError extends AppError {
   constructor(message = "Validation failed", options: Options = {}) {
-    super(message, HttpStatus.UNPROCESSABLE_ENTITY, { code: ErrorCode.VALIDATION_FAILED, ...options });
+    super(message, HttpStatus.UNPROCESSABLE_ENTITY, {
+      code: ErrorCode.VALIDATION_FAILED,
+      ...options,
+    });
   }
 }
 
@@ -48,6 +51,9 @@ export class TooManyRequestsError extends AppError {
 
 export class InternalError extends AppError {
   constructor(message = "Internal server error", options: Options = {}) {
-    super(message, HttpStatus.INTERNAL_SERVER_ERROR, { code: ErrorCode.INTERNAL_ERROR, ...options });
+    super(message, HttpStatus.INTERNAL_SERVER_ERROR, {
+      code: ErrorCode.INTERNAL_ERROR,
+      ...options,
+    });
   }
 }

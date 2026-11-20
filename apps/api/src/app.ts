@@ -8,7 +8,6 @@ import { accountRoutes } from "@/routes/accounts/index.ts";
 import { healthRoutes } from "@/routes/health.ts";
 
 export function buildApp() {
-   
   const app = Fastify({ logger: { level: Config.LOG_LEVEL } });
 
   // Zod schemas on routes drive validation, serialization and the OpenAPI docs.

@@ -34,7 +34,7 @@ export function createAccount(app: FastifyInstance) {
       }
 
       const hashedPassword = await bcrypt.hash(password, SALT_ROUNDS);
-      
+
       await insertAccount({ email, password: hashedPassword });
 
       return reply.code(HttpStatus.OK).send({ message: "Account created!", email });

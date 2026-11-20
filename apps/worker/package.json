@@ -8,11 +8,11 @@
     "start": "tsx --env-file=../../.env src/index.ts",
     "typecheck": "tsc --noEmit"
   },
+  "dependencies": {
+    "@hookrelay/shared": "workspace:*"
+  },
   "devDependencies": {
     "@types/node": "^26.6.6",
     "typescript": "^7.0.2"
-  },
-  "dependencies": {
-    "@hookrelay/shared": "workspace:*"
   }
 }

@@ -1,4 +1,4 @@
-export type Environment = "dev" | "production" | "test" | 'staging';
+export type Environment = "dev" | "production" | "test" | "staging";
 
 /**
  * Resolves the runtime environment from NODE_ENV.

@@ -5,6 +5,7 @@ import {
   HttpStatus,
   ValidationError,
   isAppError,
+  isDevelopment,
 } from "@hookrelay/shared";
 import type { FastifyError, FastifyInstance } from "fastify";
 import { ZodError } from "zod";
@@ -57,6 +58,10 @@ function toAppError(err: unknown): AppError | undefined {
 /** Global error handler. Register before the routes. */
 export function registerErrorHandler(app: FastifyInstance) {
   app.setErrorHandler((err: FastifyError, request, reply) => {
+    if (isDevelopment()) {
+      console.log(JSON.stringify(err, null, 2));
+    }
+
     // Fastify's own JSON-schema validation (request body/params/querystring).
     if (err.validation) {
       return reply.code(HttpStatus.BAD_REQUEST).send({
@@ -69,7 +74,8 @@ export function registerErrorHandler(app: FastifyInstance) {
 
     const appError = toAppError(err);
     if (appError) {
-      if (appError.statusCode >= HttpStatus.INTERNAL_SERVER_ERROR) request.log.error({ err }, "request failed");
+      if (appError.statusCode >= HttpStatus.INTERNAL_SERVER_ERROR)
+        request.log.error({ err }, "request failed");
       return reply.code(appError.statusCode).send(appError.toJSON());
     }
 

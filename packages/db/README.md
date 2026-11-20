@@ -38,6 +38,7 @@ migrations/       generated SQL migrations
 3. Import it from `@hookrelay/db` in the app.
 
 Guidelines for helpers:
+
 - Take plain arguments and return plain rows or types (`Account`), never query builders.
 - Keep them free of business logic (no hashing, validation or HTTP concerns).
 - Let database errors propagate. The API's global error handler maps Postgres
