@@ -72,6 +72,9 @@ importers:
 
   apps/worker:
     dependencies:
+      '@hookrelay/queue':
+        specifier: workspace:*
+        version: link:../../packages/queue
       '@hookrelay/shared':
         specifier: workspace:*
         version: link:../../packages/shared

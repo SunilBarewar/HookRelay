@@ -9,6 +9,7 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "@hookrelay/queue": "workspace:*",
     "@hookrelay/shared": "workspace:*"
   },
   "devDependencies": {

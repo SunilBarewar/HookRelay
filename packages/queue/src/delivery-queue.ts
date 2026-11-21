@@ -23,7 +23,7 @@ export const createDeliveryQueue = (connectionString: string): DeliveryQueue => 
 };
 
 export const enqueueDeliveries = (queue: DeliveryQueue, deliveryIds: string[]) => {
-  queue.addBulk(
+  return queue.addBulk(
     deliveryIds.map((deliveryId) => ({
       name: "deliver-event",
       data: { deliveryId },
