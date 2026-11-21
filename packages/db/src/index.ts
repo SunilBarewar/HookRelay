@@ -6,4 +6,13 @@ export { closeDatabase } from "./instance.ts";
 export { connectDatabase } from "./client.ts";
 export type { ConnectDatabaseOptions, Database } from "./client.ts";
 export * from "./queries/index.ts";
-export type { Account, NewAccount, Application, NewApplication } from "./schema/index.ts";
+export type {
+  Account,
+  NewAccount,
+  Application,
+  NewApplication,
+  Endpoint,
+  NewEndpoint,
+  EndpointSubscription,
+  NewEndpointSubscription,
+} from "./schema/index.ts";
