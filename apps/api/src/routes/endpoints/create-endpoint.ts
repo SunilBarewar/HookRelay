@@ -41,7 +41,12 @@ export const createEndpoint: FastifyPluginAsyncZod = async (app) => {
       const signingSecret = generateSigningSecret();
 
       const endpoint = await insertEndpoint(
-        { applicationId: application.id, url: request.body.url, signingSecret },
+        {
+          applicationId: application.id,
+          url: request.body.url,
+          description: request.body.description,
+          signingSecret,
+        },
         request.body.eventTypes,
       );
 

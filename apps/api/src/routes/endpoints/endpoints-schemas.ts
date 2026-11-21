@@ -11,6 +11,7 @@ export const CreateEndpointBody = z.object({
     .url({ protocol: /^https?$/ })
     .trim()
     .max(2048),
+  description: z.string().trim().max(500).optional(),
   /** Event types this endpoint wants to receive, e.g. ["order.created"]. */
   eventTypes: z.array(z.string().trim().min(1).max(255)).min(1).max(100),
 });
@@ -19,6 +20,7 @@ export const EndpointResponse = z.object({
   id: z.uuid(),
   applicationId: z.uuid(),
   url: z.string(),
+  description: z.string().nullable(),
   status: z.enum(["active", "disabled"]),
   eventTypes: z.array(z.string()),
   createdAt: z.iso.datetime(),
@@ -37,6 +39,7 @@ export function toEndpointResponse(
     id: endpoint.id,
     applicationId: endpoint.applicationId,
     url: endpoint.url,
+    description: endpoint.description,
     status: endpoint.status,
     eventTypes: endpoint.subscriptions.map((s) => s.eventType),
     createdAt: endpoint.createdAt.toISOString(),

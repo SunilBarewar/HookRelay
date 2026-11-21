@@ -13,6 +13,7 @@ export const endpoints = pgTable(
       .notNull()
       .references(() => applications.id, { onDelete: "cascade" }),
     url: text("url").notNull(),
+    description: text("description"),
     status: endpointStatus("status").notNull().default("active"),
     signingSecret: text("signing_secret").notNull(),
     ...timestamps,

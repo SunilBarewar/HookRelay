@@ -22,6 +22,13 @@
       "when": 1795231695148,
       "tag": "0002_endpoints_tables",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1795251658707,
+      "tag": "0003_endpoints_description",
+      "breakpoints": true
     }
   ]
 }
