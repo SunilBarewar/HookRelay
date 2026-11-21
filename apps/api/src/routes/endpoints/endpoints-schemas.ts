@@ -1,13 +1,19 @@
 import type { EndpointWithSubscriptions } from "@hookrelay/db";
 import { z } from "zod";
 
+import { getEndpointUrlError } from "@/lib/endpoint-url.ts";
+
 export const ApplicationParams = z.object({ applicationId: z.uuid() });
 
 export const CreateEndpointBody = z.object({
   url: z
     .url({ protocol: /^https?$/ })
     .trim()
-    .max(2048),
+    .max(2048)
+    .superRefine((value, ctx) => {
+      const message = getEndpointUrlError(value);
+      if (message) ctx.addIssue({ code: "custom", message });
+    }),
   description: z.string().trim().max(500).optional(),
   /** Event types this endpoint wants to receive, e.g. ["order.created"]. */
   eventTypes: z.array(z.string().trim().min(1).max(255)).min(1).max(100),
