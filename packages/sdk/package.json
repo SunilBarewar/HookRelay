@@ -1,6 +1,7 @@
 {
   "name": "@hookrelay/sdk",
   "version": "0.1.0",
+  "private": true,
   "description": "Official JavaScript/TypeScript SDK for the HookRelay API",
   "license": "MIT",
   "files": [

@@ -4,15 +4,14 @@ import { Endpoints } from "./resources/endpoints.ts";
 import { Events } from "./resources/events.ts";
 
 export type HookRelayOptions = {
-  /** API base URL, without a trailing slash. */
-  baseUrl?: string;
   /** Per-request timeout. Default 30s. */
   timeoutMs?: number;
   /** Custom fetch implementation (tests, proxies, older runtimes). */
   fetch?: typeof fetch;
 };
 
-export const DEFAULT_BASE_URL = "https://api.hookrelay.dev";
+// TODO: replace with the real hosted API URL when publishing the package on npm.
+const LOCAL_URL = "http://localhost:8000";
 
 export class HookRelay {
   readonly applications: Applications;
@@ -24,7 +23,7 @@ export class HookRelay {
 
     const request = createRequester({
       apiKey,
-      baseUrl: (options.baseUrl ?? DEFAULT_BASE_URL).replace(/\/+$/, ""),
+      baseUrl: LOCAL_URL,
       timeoutMs: options.timeoutMs ?? 30_000,
       fetch: options.fetch ?? globalThis.fetch,
     });
