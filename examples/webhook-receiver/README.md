@@ -44,6 +44,23 @@ curl -X POST http://localhost:4000/webhook \
   -d '{"hello":"world"}'
 ```
 
-## Not included yet
+## Verify signatures
 
-This receiver does not verify signatures. Once the worker signs deliveries, verification with the endpoint's `whsec_…` signing secret can be added here as a reference for customers.
+Every delivery is signed. Set the `WEBHOOK_SECRET` environment variable to the endpoint's signing secret (the `whsec_...` value returned once when the endpoint is created) and restart. The receiver then rejects anything that isn't validly signed with `401`.
+
+Without `WEBHOOK_SECRET` the receiver accepts everything and says so on startup.
+
+Each delivery carries these headers:
+
+| Header                  | Meaning                                   |
+| ----------------------- | ----------------------------------------- |
+| `x-hookrelay-signature` | Hex HMAC-SHA256 of `${timestamp}.${body}` |
+| `x-hookrelay-timestamp` | Unix time in seconds when it was signed   |
+| `x-hookrelay-event-id`  | The event that triggered this delivery    |
+
+To verify (see [src/verify-signature.ts](src/verify-signature.ts), which uses only `node:crypto`):
+
+1. Use the **raw** request body, exactly as received. Re-serializing the parsed JSON can change the bytes and break the signature.
+2. Compute `HMAC-SHA256(secret, "<timestamp>.<raw body>")` as hex.
+3. Compare it with `x-hookrelay-signature` in constant time (`timingSafeEqual`).
+4. Reject timestamps more than a few minutes from now, so a captured request can't be replayed.
