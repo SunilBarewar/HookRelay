@@ -8,8 +8,8 @@ import { bearerAuthSecurity } from "@/schemas/security.ts";
 import {
   ApplicationParams,
   CreateEventBody,
-  EventResponse,
-  toEventResponse,
+  CreateEventResponse,
+  toCreateEventResponse,
 } from "./events-schemas.ts";
 
 export const createEvent: FastifyPluginAsyncZod = async (app) => {
@@ -18,12 +18,12 @@ export const createEvent: FastifyPluginAsyncZod = async (app) => {
     {
       schema: {
         tags: ["events"],
-        summary: "Create an event and queue deliveries to subscribed endpoints",
+        summary: "Create an event",
         security: bearerAuthSecurity,
         params: ApplicationParams,
         body: CreateEventBody,
         response: {
-          [HttpStatus.CREATED]: successResponse(EventResponse),
+          [HttpStatus.CREATED]: successResponse(CreateEventResponse),
           [HttpStatus.UNPROCESSABLE_ENTITY]: ErrorResponse,
           ...applicationErrorResponses,
         },
@@ -51,7 +51,7 @@ export const createEvent: FastifyPluginAsyncZod = async (app) => {
 
       return reply
         .status(HttpStatus.CREATED)
-        .send(toSuccessResponse(message, toEventResponse(event)));
+        .send(toSuccessResponse(message, toCreateEventResponse(event)));
     },
   );
 };

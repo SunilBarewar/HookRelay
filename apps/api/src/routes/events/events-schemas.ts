@@ -10,32 +10,24 @@ export const CreateEventBody = z.object({
   payload: z.record(z.string(), z.unknown()),
 });
 
-export const DeliveryResponse = z.object({
+/** Slim on purpose: the caller already has the payload, so the create response only confirms what was queued. */
+export const CreateEventDeliveryResponse = z.object({
   id: z.uuid(),
-  endpointId: z.uuid(),
   status: z.enum(["pending", "success", "failed", "dead_lettered"]),
 });
 
-export const EventResponse = z.object({
+export const CreateEventResponse = z.object({
   id: z.uuid(),
-  applicationId: z.uuid(),
-  eventType: z.string(),
-  payload: z.unknown(),
-  deliveries: z.array(DeliveryResponse),
+  deliveries: z.array(CreateEventDeliveryResponse),
   createdAt: z.iso.datetime(),
 });
 
-export function toEventResponse(event: EventWithDeliveries): z.infer<typeof EventResponse> {
+export function toCreateEventResponse(
+  event: EventWithDeliveries,
+): z.infer<typeof CreateEventResponse> {
   return {
     id: event.id,
-    applicationId: event.applicationId,
-    eventType: event.eventType,
-    payload: event.payload,
-    deliveries: event.deliveries.map((d) => ({
-      id: d.id,
-      endpointId: d.endpointId,
-      status: d.status,
-    })),
+    deliveries: event.deliveries.map((d) => ({ id: d.id, status: d.status })),
     createdAt: event.createdAt.toISOString(),
   };
 }
