@@ -3,13 +3,12 @@ import { ErrorCode, HttpStatus, NotFoundError } from "@hookrelay/shared";
 import type { FastifyPluginAsyncZod } from "fastify-type-provider-zod";
 
 import { hashPassword } from "@/lib/password.ts";
-import { ErrorResponse } from "@/schemas/error.ts";
+import { ErrorResponse, protectedErrorResponses } from "@/schemas/error.ts";
 import { bearerAuthSecurity } from "@/schemas/security.ts";
 import {
   AccountResponse,
   IdParams,
   UpdateAccountBody,
-  protectedErrorResponses,
   toAccountResponse,
 } from "./accounts-schemas.ts";
 

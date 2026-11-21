@@ -3,13 +3,12 @@ import { ErrorCode, HttpStatus, NotFoundError } from "@hookrelay/shared";
 import type { FastifyPluginAsyncZod } from "fastify-type-provider-zod";
 
 import { generateSigningSecret } from "@/lib/signing-secret.ts";
-import { ErrorResponse } from "@/schemas/error.ts";
+import { ErrorResponse, applicationErrorResponses } from "@/schemas/error.ts";
 import { bearerAuthSecurity } from "@/schemas/security.ts";
 import {
   ApplicationParams,
   CreateEndpointBody,
   CreateEndpointResponse,
-  applicationErrorResponses,
   toEndpointResponse,
 } from "./endpoints-schemas.ts";
 

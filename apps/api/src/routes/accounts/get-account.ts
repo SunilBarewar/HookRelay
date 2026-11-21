@@ -2,13 +2,9 @@ import { findAccountById } from "@hookrelay/db";
 import { ErrorCode, HttpStatus, NotFoundError } from "@hookrelay/shared";
 import type { FastifyPluginAsyncZod } from "fastify-type-provider-zod";
 
+import { protectedErrorResponses } from "@/schemas/error.ts";
 import { bearerAuthSecurity } from "@/schemas/security.ts";
-import {
-  AccountResponse,
-  IdParams,
-  protectedErrorResponses,
-  toAccountResponse,
-} from "./accounts-schemas.ts";
+import { AccountResponse, IdParams, toAccountResponse } from "./accounts-schemas.ts";
 
 export const getAccount: FastifyPluginAsyncZod = async (app) => {
   app.get(

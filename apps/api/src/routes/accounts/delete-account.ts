@@ -2,8 +2,9 @@ import { deleteAccount } from "@hookrelay/db";
 import { ErrorCode, HttpStatus, NotFoundError } from "@hookrelay/shared";
 import type { FastifyPluginAsyncZod } from "fastify-type-provider-zod";
 
+import { protectedErrorResponses } from "@/schemas/error.ts";
 import { bearerAuthSecurity } from "@/schemas/security.ts";
-import { IdParams, MessageResponse, protectedErrorResponses } from "./accounts-schemas.ts";
+import { IdParams, MessageResponse } from "./accounts-schemas.ts";
 
 export const deleteAccountRoute: FastifyPluginAsyncZod = async (app) => {
   app.delete(

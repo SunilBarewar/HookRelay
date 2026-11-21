@@ -1,8 +1,5 @@
 import type { EndpointWithSubscriptions } from "@hookrelay/db";
-import { HttpStatus } from "@hookrelay/shared";
 import { z } from "zod";
-
-import { ErrorResponse } from "@/schemas/error.ts";
 
 export const ApplicationParams = z.object({ applicationId: z.uuid() });
 
@@ -46,13 +43,3 @@ export function toEndpointResponse(
     updatedAt: endpoint.updatedAt.toISOString(),
   };
 }
-
-export const protectedErrorResponses = {
-  [HttpStatus.UNAUTHORIZED]: ErrorResponse,
-};
-
-/** Responses for routes that act on a specific application. */
-export const applicationErrorResponses = {
-  ...protectedErrorResponses,
-  [HttpStatus.NOT_FOUND]: ErrorResponse,
-};

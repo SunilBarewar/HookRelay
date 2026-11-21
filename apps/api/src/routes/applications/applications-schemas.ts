@@ -1,8 +1,5 @@
 import type { Application } from "@hookrelay/db";
-import { HttpStatus } from "@hookrelay/shared";
 import { z } from "zod";
-
-import { ErrorResponse } from "@/schemas/error.ts";
 
 export const CreateApplicationBody = z.object({
   name: z.string().trim().min(1).max(255),
@@ -31,13 +28,3 @@ export function toApplicationResponse(app: Application): z.infer<typeof Applicat
     updatedAt: app.updatedAt.toISOString(),
   };
 }
-
-export const protectedErrorResponses = {
-  [HttpStatus.UNAUTHORIZED]: ErrorResponse,
-};
-
-/** Responses for routes that act on a specific application. */
-export const applicationErrorResponses = {
-  ...protectedErrorResponses,
-  [HttpStatus.NOT_FOUND]: ErrorResponse,
-};

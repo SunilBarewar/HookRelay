@@ -3,8 +3,9 @@ import { ErrorCode, HttpStatus, NotFoundError } from "@hookrelay/shared";
 import type { FastifyPluginAsyncZod } from "fastify-type-provider-zod";
 
 import { generateApiKey } from "@/lib/api-key.ts";
+import { protectedErrorResponses } from "@/schemas/error.ts";
 import { bearerAuthSecurity } from "@/schemas/security.ts";
-import { ApiKeyResponse, IdParams, protectedErrorResponses } from "./accounts-schemas.ts";
+import { ApiKeyResponse, IdParams } from "./accounts-schemas.ts";
 
 export const generateAccountApiKey: FastifyPluginAsyncZod = async (app) => {
   app.post(

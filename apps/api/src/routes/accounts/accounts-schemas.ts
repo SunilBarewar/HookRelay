@@ -1,8 +1,5 @@
 import type { Account } from "@hookrelay/db";
-import { HttpStatus } from "@hookrelay/shared";
 import { z } from "zod";
-
-import { ErrorResponse } from "@/schemas/error.ts";
 
 /** Body for both creating an account and logging in. */
 export const CredentialsBody = z.object({
@@ -53,10 +50,3 @@ export const ApiKeyResponse = z.object({
   message: z.string(),
   apiKey: z.string(),
 });
-
-/** Responses every protected route can return. */
-export const protectedErrorResponses = {
-  [HttpStatus.UNAUTHORIZED]: ErrorResponse,
-  [HttpStatus.FORBIDDEN]: ErrorResponse,
-  [HttpStatus.NOT_FOUND]: ErrorResponse,
-};

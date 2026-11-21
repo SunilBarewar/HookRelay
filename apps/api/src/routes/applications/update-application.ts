@@ -2,13 +2,12 @@ import { updateApplication } from "@hookrelay/db";
 import { ErrorCode, HttpStatus, NotFoundError } from "@hookrelay/shared";
 import type { FastifyPluginAsyncZod } from "fastify-type-provider-zod";
 
-import { ErrorResponse } from "@/schemas/error.ts";
+import { ErrorResponse, applicationErrorResponses } from "@/schemas/error.ts";
 import { bearerAuthSecurity } from "@/schemas/security.ts";
 import {
   ApplicationResponse,
   IdParams,
   UpdateApplicationBody,
-  applicationErrorResponses,
   toApplicationResponse,
 } from "./applications-schemas.ts";
 
