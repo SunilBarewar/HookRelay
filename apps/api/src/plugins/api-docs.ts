@@ -17,7 +17,7 @@ export function registerApiDocs(app: FastifyInstance) {
       },
       components: {
         securitySchemes: {
-          bearerAuth: { type: "http", scheme: "bearer", bearerFormat: "JWT" },
+          bearerAuth: { type: "http", scheme: "bearer", bearerFormat: "JWT or API key" },
         },
       },
       tags: [

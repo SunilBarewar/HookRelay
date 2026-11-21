@@ -25,6 +25,16 @@ export async function findAccountById(id: string): Promise<Account | undefined> 
   return account;
 }
 
+/** Look up an account by the SHA-256 hash of its API key. */
+export async function findAccountByApiKeyHash(apiKeyHash: string): Promise<Account | undefined> {
+  const [account] = await db
+    .select()
+    .from(accounts)
+    .where(eq(accounts.apiKeyHash, apiKeyHash))
+    .limit(1);
+  return account;
+}
+
 /** `password` must already be hashed. Only the provided fields are changed. */
 export type UpdateAccountInput = Partial<Pick<NewAccount, "email" | "password">>;
 

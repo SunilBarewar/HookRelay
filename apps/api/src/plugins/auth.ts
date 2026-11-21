@@ -1,17 +1,33 @@
+import { findAccountByApiKeyHash } from "@hookrelay/db";
 import { ErrorCode, UnauthorizedError } from "@hookrelay/shared";
 import type { FastifyInstance, FastifyRequest } from "fastify";
 import fp from "fastify-plugin";
 
+import { hashApiKey, isApiKey } from "@/lib/api-key.ts";
 import { verifyAccountToken } from "@/lib/jwt.ts";
 
 const BEARER_PREFIX = "Bearer ";
 
 /**
- * Verifies the `Authorization: Bearer <token>` header and returns the account id.
- * Throws UnauthorizedError (-> 401 via the global error handler) if the header is
- * missing/malformed or the token is invalid/expired.
+ * Hashes the API key and looks up the account that owns it.
+ * Throws UnauthorizedError if no account has that key.
  */
-async function getAccountId(request: FastifyRequest): Promise<string> {
+async function getAccountIdFromApiKey(apiKey: string): Promise<string> {
+  const account = apiKey ? await findAccountByApiKeyHash(hashApiKey(apiKey)) : undefined;
+
+  if (!account) {
+    throw new UnauthorizedError("Invalid API key", { code: ErrorCode.UNAUTHORIZED });
+  }
+
+  return account.id;
+}
+
+/**
+ * Verifies the `Authorization: Bearer <credential>` header, where the credential is either an
+ * API key (`hr_...`) or a JWT, and returns the account id. Throws UnauthorizedError (-> 401 via
+ * the global error handler) if the header is missing/malformed or the credential is invalid/expired.
+ */
+async function getAccountIdFromAuthHeader(request: FastifyRequest): Promise<string> {
   const header = request.headers.authorization;
 
   if (!header?.startsWith(BEARER_PREFIX)) {
@@ -21,6 +37,11 @@ async function getAccountId(request: FastifyRequest): Promise<string> {
   }
 
   const token = header.slice(BEARER_PREFIX.length).trim();
+
+  // `Authorization: Bearer hr_...` is an API key, anything else is treated as a JWT.
+  if (isApiKey(token)) {
+    return getAccountIdFromApiKey(token);
+  }
 
   try {
     return await verifyAccountToken(token);
@@ -48,6 +69,6 @@ export const registerAuth = fp(async (app: FastifyInstance) => {
   app.decorateRequest("accountId", "");
 
   app.decorate("authenticate", async (request: FastifyRequest) => {
-    request.accountId = await getAccountId(request);
+    request.accountId = await getAccountIdFromAuthHeader(request);
   });
 });
