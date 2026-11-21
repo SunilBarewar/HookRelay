@@ -1,4 +1,5 @@
 import { getApplicationById, insertEvent } from "@hookrelay/db";
+import { enqueueDeliveries } from "@hookrelay/queue";
 import { ErrorCode, HttpStatus, NotFoundError } from "@hookrelay/shared";
 import type { FastifyPluginAsyncZod } from "fastify-type-provider-zod";
 
@@ -44,6 +45,14 @@ export const createEvent: FastifyPluginAsyncZod = async (app) => {
       });
 
       const count = event.deliveries.length;
+
+      if (count > 0) {
+        await enqueueDeliveries(
+          app.deliveryQueue,
+          event.deliveries.map((delivery) => delivery.id),
+        );
+      }
+
       const message =
         count === 0
           ? "Event created, no endpoints subscribed to this event type"

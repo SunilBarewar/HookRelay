@@ -10,15 +10,14 @@ export const CreateEventBody = z.object({
   payload: z.record(z.string(), z.unknown()),
 });
 
-/** Slim on purpose: the caller already has the payload, so the create response only confirms what was queued. */
-export const CreateEventDeliveryResponse = z.object({
-  id: z.uuid(),
-  status: z.enum(["pending", "success", "failed", "dead_lettered"]),
-});
-
 export const CreateEventResponse = z.object({
   id: z.uuid(),
-  deliveries: z.array(CreateEventDeliveryResponse),
+  deliveries: z.array(
+    z.object({
+      id: z.uuid(),
+      status: z.enum(["pending", "success", "failed", "dead_lettered"]),
+    }),
+  ),
   createdAt: z.iso.datetime(),
 });
 

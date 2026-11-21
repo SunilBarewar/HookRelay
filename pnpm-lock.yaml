@@ -32,6 +32,9 @@ importers:
       '@hookrelay/db':
         specifier: workspace:*
         version: link:../../packages/db
+      '@hookrelay/queue':
+        specifier: workspace:*
+        version: link:../../packages/queue
       '@hookrelay/shared':
         specifier: workspace:*
         version: link:../../packages/shared

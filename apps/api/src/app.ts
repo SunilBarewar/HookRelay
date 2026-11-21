@@ -5,6 +5,7 @@ import { Config } from "@/env.ts";
 import { registerApiDocs } from "@/plugins/api-docs.ts";
 import { registerAuth } from "@/plugins/auth.ts";
 import { registerErrorHandler } from "@/plugins/error-handler.ts";
+import { registerQueue } from "@/plugins/queue.ts";
 import { registerRoutes } from "@/routes/index.ts";
 
 export function buildApp() {
@@ -16,6 +17,7 @@ export function buildApp() {
 
   registerErrorHandler(app);
   app.register(registerAuth);
+  app.register(registerQueue);
 
   // Must be registered before the routes so they show up in the docs.
   registerApiDocs(app);
