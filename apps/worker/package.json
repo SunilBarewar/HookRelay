@@ -6,13 +6,19 @@
   "scripts": {
     "dev": "tsx watch --env-file=../../.env src/index.ts",
     "start": "tsx --env-file=../../.env src/index.ts",
+    "build": "tsdown",
+    "start:prod": "node dist/index.mjs",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "@hookrelay/db": "workspace:*",
     "@hookrelay/queue": "workspace:*",
     "@hookrelay/shared": "workspace:*",
-    "undici": "^8.13.0"
+    "bullmq": "^6.7.8",
+    "drizzle-orm": "^0.45.4",
+    "postgres": "^4.1.1",
+    "undici": "^8.13.0",
+    "uuid": "^14.0.3"
   },
   "devDependencies": {
     "@types/node": "^26.6.6",
