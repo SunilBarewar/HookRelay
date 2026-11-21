@@ -15,4 +15,8 @@ export type {
   NewEndpoint,
   EndpointSubscription,
   NewEndpointSubscription,
+  Event,
+  NewEvent,
+  Delivery,
+  NewDelivery,
 } from "./schema/index.ts";
