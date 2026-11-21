@@ -15,6 +15,13 @@
       "when": 1795208598715,
       "tag": "0001_applications_table_schema",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1795231695148,
+      "tag": "0002_endpoints_tables",
+      "breakpoints": true
     }
   ]
 }
