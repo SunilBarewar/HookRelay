@@ -4,12 +4,12 @@ import type { FastifyPluginAsyncZod } from "fastify-type-provider-zod";
 
 import { generateSigningSecret } from "@/lib/signing-secret.ts";
 import { ErrorResponse } from "@/schemas/error.ts";
+import { bearerAuthSecurity } from "@/schemas/security.ts";
 import {
   ApplicationParams,
   CreateEndpointBody,
   CreateEndpointResponse,
   applicationErrorResponses,
-  security,
   toEndpointResponse,
 } from "./endpoints-schemas.ts";
 
@@ -20,7 +20,7 @@ export const createEndpoint: FastifyPluginAsyncZod = async (app) => {
       schema: {
         tags: ["endpoints"],
         summary: "Create an endpoint for an application",
-        security,
+        security: bearerAuthSecurity,
         params: ApplicationParams,
         body: CreateEndpointBody,
         response: {

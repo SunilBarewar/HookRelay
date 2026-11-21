@@ -3,7 +3,8 @@ import { ErrorCode, HttpStatus, NotFoundError } from "@hookrelay/shared";
 import type { FastifyPluginAsyncZod } from "fastify-type-provider-zod";
 
 import { generateApiKey } from "@/lib/api-key.ts";
-import { ApiKeyResponse, IdParams, protectedErrorResponses, security } from "./accounts-schemas.ts";
+import { bearerAuthSecurity } from "@/schemas/security.ts";
+import { ApiKeyResponse, IdParams, protectedErrorResponses } from "./accounts-schemas.ts";
 
 export const generateAccountApiKey: FastifyPluginAsyncZod = async (app) => {
   app.post(
@@ -13,7 +14,7 @@ export const generateAccountApiKey: FastifyPluginAsyncZod = async (app) => {
         tags: ["accounts"],
         summary: "Generate or rotate the account's API key",
         description: "The key is only returned here once. Rotating invalidates the previous key.",
-        security,
+        security: bearerAuthSecurity,
         params: IdParams,
         response: { [HttpStatus.OK]: ApiKeyResponse, ...protectedErrorResponses },
       },

@@ -32,9 +32,6 @@ export function toApplicationResponse(app: Application): z.infer<typeof Applicat
   };
 }
 
-/** Shown as a lock icon / "Authorize" box in the OpenAPI docs. */
-export const security = [{ bearerAuth: [] }];
-
 export const protectedErrorResponses = {
   [HttpStatus.UNAUTHORIZED]: ErrorResponse,
 };

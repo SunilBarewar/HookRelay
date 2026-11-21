@@ -3,12 +3,12 @@ import { ErrorCode, HttpStatus, NotFoundError } from "@hookrelay/shared";
 import type { FastifyPluginAsyncZod } from "fastify-type-provider-zod";
 
 import { ErrorResponse } from "@/schemas/error.ts";
+import { bearerAuthSecurity } from "@/schemas/security.ts";
 import {
   ApplicationResponse,
   IdParams,
   UpdateApplicationBody,
   applicationErrorResponses,
-  security,
   toApplicationResponse,
 } from "./applications-schemas.ts";
 
@@ -19,7 +19,7 @@ export const updateApplicationRoute: FastifyPluginAsyncZod = async (app) => {
       schema: {
         tags: ["applications"],
         summary: "Rename an application",
-        security,
+        security: bearerAuthSecurity,
         params: IdParams,
         body: UpdateApplicationBody,
         response: {

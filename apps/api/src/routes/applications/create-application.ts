@@ -3,11 +3,11 @@ import { HttpStatus } from "@hookrelay/shared";
 import type { FastifyPluginAsyncZod } from "fastify-type-provider-zod";
 
 import { ErrorResponse } from "@/schemas/error.ts";
+import { bearerAuthSecurity } from "@/schemas/security.ts";
 import {
   ApplicationResponse,
   CreateApplicationBody,
   protectedErrorResponses,
-  security,
   toApplicationResponse,
 } from "./applications-schemas.ts";
 
@@ -18,7 +18,7 @@ export const createApplication: FastifyPluginAsyncZod = async (app) => {
       schema: {
         tags: ["applications"],
         summary: "Create an application",
-        security,
+        security: bearerAuthSecurity,
         body: CreateApplicationBody,
         response: {
           [HttpStatus.CREATED]: ApplicationResponse,

@@ -4,12 +4,12 @@ import type { FastifyPluginAsyncZod } from "fastify-type-provider-zod";
 
 import { hashPassword } from "@/lib/password.ts";
 import { ErrorResponse } from "@/schemas/error.ts";
+import { bearerAuthSecurity } from "@/schemas/security.ts";
 import {
   AccountResponse,
   IdParams,
   UpdateAccountBody,
   protectedErrorResponses,
-  security,
   toAccountResponse,
 } from "./accounts-schemas.ts";
 
@@ -20,7 +20,7 @@ export const updateAccountRoute: FastifyPluginAsyncZod = async (app) => {
       schema: {
         tags: ["accounts"],
         summary: "Update an account's email and/or password",
-        security,
+        security: bearerAuthSecurity,
         params: IdParams,
         body: UpdateAccountBody,
         response: {
