@@ -10,7 +10,23 @@ From the repo root:
 pnpm --filter @hookrelay/example-webhook-receiver dev
 ```
 
-It listens on `http://localhost:4000`. Set `PORT` to change that.
+It listens on `http://localhost:4000`.
+
+## Configuration
+
+Settings come from a local `.env` file in this folder (git-ignored). Create it from the template:
+
+```bash
+cp .env.example .env
+```
+
+| Variable         | Default | Meaning                                                          |
+| ---------------- | ------- | ---------------------------------------------------------------- |
+| `PORT`           | `4000`  | Port to listen on                                                |
+| `FLAKY_FAILURES` | `2`     | How many times `/flaky` returns 500 before it succeeds           |
+| `WEBHOOK_SECRET` | empty   | Endpoint signing secret; empty means signatures are not verified |
+
+The file is optional, and a variable set in your shell takes precedence over it.
 
 ## Routes
 
@@ -23,11 +39,7 @@ All routes accept `POST`.
 | `/slow/:ms`     | Waits `ms` milliseconds (max 120000), then responds `200`.      | Delivery timeouts         |
 | `/flaky`        | Responds `500` for the first N calls, then `200`, then repeats. | Retries that recover      |
 
-`N` for `/flaky` defaults to `2`. Override it with `FLAKY_FAILURES`:
-
-```bash
-FLAKY_FAILURES=4 pnpm --filter @hookrelay/example-webhook-receiver dev
-```
+`N` for `/flaky` is `FLAKY_FAILURES` (default `2`).
 
 ## Try it with HookRelay
 
@@ -46,7 +58,7 @@ curl -X POST http://localhost:4000/webhook \
 
 ## Verify signatures
 
-Every delivery is signed. Set the `WEBHOOK_SECRET` environment variable to the endpoint's signing secret (the `whsec_...` value returned once when the endpoint is created) and restart. The receiver then rejects anything that isn't validly signed with `401`.
+Every delivery is signed. Set `WEBHOOK_SECRET` in `.env` to the endpoint's signing secret (the `whsec_...` value returned once when the endpoint is created) and restart. The receiver then rejects anything that isn't validly signed with `401`.
 
 Without `WEBHOOK_SECRET` the receiver accepts everything and says so on startup.
 
