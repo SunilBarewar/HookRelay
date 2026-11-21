@@ -8,6 +8,10 @@ export type DeliveryQueue = Queue<DeliveryJobData>;
 export const MAX_ATTEMPTS = 5;
 export const BACKOFF_DELAY = 5_000; // 5 seconds
 
+/** How long BullMQ waits before retrying after `attemptsMade` failed attempts (exponential: 5s, 10s, 20s, ...). */
+export const retryDelayMs = (attemptsMade: number): number =>
+  BACKOFF_DELAY * 2 ** (attemptsMade - 1);
+
 export const createDeliveryQueue = (connectionString: string): DeliveryQueue => {
   return new Queue<DeliveryJobData>(DELIVERY_QUEUE, {
     connection: {
