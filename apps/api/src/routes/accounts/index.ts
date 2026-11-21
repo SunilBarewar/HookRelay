@@ -9,7 +9,7 @@ import { login } from "./login.ts";
 import { updateAccountRoute } from "./update-account.ts";
 
 /** Signup and login: no token needed. */
-export const accountPublicRoutes: FastifyPluginAsyncZod = async (app) => {
+export const authRoutes: FastifyPluginAsyncZod = async (app) => {
   app.register(createAccount);
   app.register(login);
 };

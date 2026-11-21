@@ -9,7 +9,7 @@ import { ConflictError, ErrorCode, HttpStatus } from "@hookrelay/shared";
 
 export const createAccount: FastifyPluginAsyncZod = async (app) => {
   app.post(
-    "/",
+    "/register",
     {
       schema: {
         tags: ["accounts"],

@@ -1,6 +1,6 @@
 import type { FastifyPluginAsyncZod } from "fastify-type-provider-zod";
 
-import { accountProtectedRoutes, accountPublicRoutes } from "./accounts/index.ts";
+import { accountProtectedRoutes, authRoutes } from "./accounts/index.ts";
 import { applicationRoutes } from "./applications/index.ts";
 import { healthRoutes } from "./health.ts";
 
@@ -8,7 +8,7 @@ import { healthRoutes } from "./health.ts";
 export const registerRoutes: FastifyPluginAsyncZod = async (app) => {
   // Public routes: no token needed.
   app.register(healthRoutes);
-  app.register(accountPublicRoutes, { prefix: "/accounts" });
+  app.register(authRoutes, { prefix: "/auth" });
 
   // Protected routes: every module registered in this scope requires a valid JWT.
   app.register(
