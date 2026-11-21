@@ -33,6 +33,8 @@ export const endpointSubscriptions = pgTable(
   },
   (table) => [
     uniqueIndex("endpoint_subscriptions_endpoint_event_idx").on(table.endpointId, table.eventType),
+    index("endpoint_subscriptions_endpoint_id_idx").on(table.endpointId),
+    index("endpoint_subscriptions_event_type_idx").on(table.eventType),
   ],
 );
 

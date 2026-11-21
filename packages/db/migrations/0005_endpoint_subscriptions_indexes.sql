@@ -1,0 +1,2 @@
+CREATE INDEX "endpoint_subscriptions_endpoint_id_idx" ON "endpoint_subscriptions" USING btree ("endpoint_id");--> statement-breakpoint
+CREATE INDEX "endpoint_subscriptions_event_type_idx" ON "endpoint_subscriptions" USING btree ("event_type");
