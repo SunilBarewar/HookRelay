@@ -7,7 +7,7 @@
     "dev": "tsx watch --env-file=../../.env src/server.ts",
     "start": "tsx --env-file=../../.env src/server.ts",
     "build": "tsdown",
-    "start:prod": "node dist/server.mjs",
+    "start:prod": "node --env-file-if-exists=../../.env dist/server.mjs",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
