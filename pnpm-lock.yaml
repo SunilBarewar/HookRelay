@@ -72,12 +72,18 @@ importers:
 
   apps/worker:
     dependencies:
+      '@hookrelay/db':
+        specifier: workspace:*
+        version: link:../../packages/db
       '@hookrelay/queue':
         specifier: workspace:*
         version: link:../../packages/queue
       '@hookrelay/shared':
         specifier: workspace:*
         version: link:../../packages/shared
+      undici:
+        specifier: ^8.13.0
+        version: 8.13.0
     devDependencies:
       '@types/node':
         specifier: ^26.6.6
@@ -1554,6 +1560,10 @@ packages:
     resolution: {integrity: sha512-8Mx+uNKKER2bA4AdtedkqRbwUCIJFr2nJckXRe5yrDqzePqwLP7VNcctN8/XdmDSbF7mS+jJKIszlL+vbam1VA==}
     engines: {node: '>=22.19.0'}
 
+  undici@8.13.0:
+    resolution: {integrity: sha512-mxbeyRlRhHUTWE1zf/FwDOXTKMhE1vMQRz/o2oOir/5fIWsB79TeZrByMkj019EdDuxPg03jprCjFLxLkmxTCQ==}
+    engines: {node: '>=22.19.0'}
+
   uuid@14.0.3:
     resolution: {integrity: sha512-Sc5u1VVln93y1Xnz4R+CunOZc7R9LUcTmhj7Rc7Eg3HVcf7rVn2FOoa812fe0W8p3jD7xeoGSYbfqCGGH2B6xw==}
     hasBin: true
@@ -2562,6 +2572,8 @@ snapshots:
   undici-types@8.9.0: {}
 
   undici@8.12.4: {}
+
+  undici@8.13.0: {}
 
   uuid@14.0.3: {}
 

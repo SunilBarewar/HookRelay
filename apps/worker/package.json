@@ -9,8 +9,10 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "@hookrelay/db": "workspace:*",
     "@hookrelay/queue": "workspace:*",
-    "@hookrelay/shared": "workspace:*"
+    "@hookrelay/shared": "workspace:*",
+    "undici": "^8.13.0"
   },
   "devDependencies": {
     "@types/node": "^26.6.6",
