@@ -11,6 +11,18 @@
   --color-brand-500: var(--color-indigo-500);
   --color-brand-600: var(--color-indigo-600);
   --color-brand-700: var(--color-indigo-700);
+
+  /* Fades a freshly added row from tinted to plain, so people can spot it. */
+  --animate-highlight: highlight 2.5s ease-out;
+
+  @keyframes highlight {
+    from {
+      background-color: var(--color-brand-50);
+    }
+    to {
+      background-color: transparent;
+    }
+  }
 }
 
 @layer base {
@@ -21,6 +33,32 @@
 
   body {
     @apply bg-white font-sans text-slate-900;
+  }
+}
+
+/* Stop the page behind an open modal from scrolling. */
+html:has(dialog[open]) {
+  overflow: hidden;
+}
+
+dialog[open] {
+  animation: dialog-in 160ms ease-out;
+}
+
+dialog::backdrop {
+  animation: backdrop-in 160ms ease-out;
+}
+
+@keyframes dialog-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.98);
+  }
+}
+
+@keyframes backdrop-in {
+  from {
+    opacity: 0;
   }
 }
 
