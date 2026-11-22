@@ -28,7 +28,7 @@ export function GuestOnly() {
   const session = useSession();
 
   if (session.isPending) return <CheckingSession />;
-  if (session.data) return <Navigate to="/" replace />;
+  if (session.data) return <Navigate to="/applications" replace />;
   return <Outlet />;
 }
 
