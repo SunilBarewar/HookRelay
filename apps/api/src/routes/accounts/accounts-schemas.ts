@@ -11,7 +11,6 @@ export const CredentialsBody = z.object({
 export const AuthResponse = z.object({
   message: z.string(),
   email: z.email(),
-  token: z.string(),
 });
 
 export const IdParams = z.object({ id: z.uuid() });

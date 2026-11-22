@@ -3,6 +3,7 @@ import { ErrorCode, HttpStatus, UnauthorizedError } from "@hookrelay/shared";
 import bcrypt from "bcrypt";
 import type { FastifyPluginAsyncZod } from "fastify-type-provider-zod";
 
+import { setAuthCookie } from "@/lib/auth-cookie.ts";
 import { signAccountToken } from "@/lib/jwt.ts";
 import { ErrorResponse } from "@/schemas/error.ts";
 import { AuthResponse, CredentialsBody } from "./accounts-schemas.ts";
@@ -17,7 +18,7 @@ export const login: FastifyPluginAsyncZod = async (app) => {
     {
       schema: {
         tags: ["accounts"],
-        summary: "Log in and receive a JWT (valid for 7 days)",
+        summary: "Log in",
         body: CredentialsBody,
         response: {
           [HttpStatus.OK]: AuthResponse,
@@ -36,9 +37,9 @@ export const login: FastifyPluginAsyncZod = async (app) => {
         throw new UnauthorizedError("Invalid email or password", { code: ErrorCode.UNAUTHORIZED });
       }
 
-      const token = await signAccountToken(account.id);
+      setAuthCookie(reply, await signAccountToken(account.id));
 
-      return reply.code(HttpStatus.OK).send({ message: "Logged in!", email, token });
+      return reply.code(HttpStatus.OK).send({ message: "Logged in!", email });
     },
   );
 };

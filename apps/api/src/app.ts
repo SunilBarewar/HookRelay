@@ -1,3 +1,5 @@
+import cookie from "@fastify/cookie";
+import cors from "@fastify/cors";
 import Fastify from "fastify";
 import { serializerCompiler, validatorCompiler } from "fastify-type-provider-zod";
 
@@ -16,6 +18,8 @@ export function buildApp() {
   app.setSerializerCompiler(serializerCompiler);
 
   registerErrorHandler(app);
+  app.register(cookie);
+  app.register(cors, { origin: Config.WEB_ORIGIN, credentials: true });
   app.register(registerAuth);
   app.register(registerQueue);
 

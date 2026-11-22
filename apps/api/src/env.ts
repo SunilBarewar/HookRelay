@@ -7,6 +7,8 @@ const schema = z.object({
   DATABASE_URL: z.string().min(1),
   REDIS_URL: z.string().min(1),
   JWT_SECRET: z.string().min(32),
+  /** Origin of the web app allowed to call the API with cookies. */
+  WEB_ORIGIN: z.string().default("http://localhost:5173"),
 });
 
 export const Config = schema.parse(process.env);

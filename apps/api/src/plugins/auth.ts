@@ -4,6 +4,7 @@ import type { FastifyInstance, FastifyRequest } from "fastify";
 import fp from "fastify-plugin";
 
 import { hashApiKey, isApiKey } from "@/lib/api-key.ts";
+import { AUTH_COOKIE } from "@/lib/auth-cookie.ts";
 import { verifyAccountToken } from "@/lib/jwt.ts";
 
 const BEARER_PREFIX = "Bearer ";
@@ -23,22 +24,31 @@ async function getAccountIdFromApiKey(apiKey: string): Promise<string> {
 }
 
 /**
- * Verifies the `Authorization: Bearer <credential>` header, where the credential is either an
- * API key (`hr_...`) or a JWT, and returns the account id. Throws UnauthorizedError (-> 401 via
- * the global error handler) if the header is missing/malformed or the credential is invalid/expired.
+ * Resolves the account id from either the `Authorization: Bearer <credential>` header (an API key
+ * `hr_...` or a JWT) or, when there is no header, the httpOnly auth cookie (a JWT, used by the web
+ * app). Throws UnauthorizedError (-> 401 via the global error handler) if neither is present or the
+ * credential is invalid/expired.
  */
-async function getAccountIdFromAuthHeader(request: FastifyRequest): Promise<string> {
+async function getAccountId(request: FastifyRequest): Promise<string> {
   const header = request.headers.authorization;
+  let token: string | undefined;
 
-  if (!header?.startsWith(BEARER_PREFIX)) {
-    throw new UnauthorizedError("Missing or malformed Authorization header", {
-      code: ErrorCode.UNAUTHORIZED,
-    });
+  if (header) {
+    if (!header.startsWith(BEARER_PREFIX)) {
+      throw new UnauthorizedError("Missing or malformed Authorization header", {
+        code: ErrorCode.UNAUTHORIZED,
+      });
+    }
+    token = header.slice(BEARER_PREFIX.length).trim();
+  } else {
+    token = request.cookies[AUTH_COOKIE];
   }
 
-  const token = header.slice(BEARER_PREFIX.length).trim();
+  if (!token) {
+    throw new UnauthorizedError("Authentication required", { code: ErrorCode.UNAUTHORIZED });
+  }
 
-  // `Authorization: Bearer hr_...` is an API key, anything else is treated as a JWT.
+  // `hr_...` is an API key, anything else is treated as a JWT.
   if (isApiKey(token)) {
     return getAccountIdFromApiKey(token);
   }
@@ -69,6 +79,6 @@ export const registerAuth = fp(async (app: FastifyInstance) => {
   app.decorateRequest("accountId", "");
 
   app.decorate("authenticate", async (request: FastifyRequest) => {
-    request.accountId = await getAccountIdFromAuthHeader(request);
+    request.accountId = await getAccountId(request);
   });
 });

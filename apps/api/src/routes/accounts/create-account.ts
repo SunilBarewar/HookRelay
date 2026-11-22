@@ -1,6 +1,7 @@
 import { findAccountByEmail, insertAccount } from "@hookrelay/db";
 import type { FastifyPluginAsyncZod } from "fastify-type-provider-zod";
 
+import { setAuthCookie } from "@/lib/auth-cookie.ts";
 import { signAccountToken } from "@/lib/jwt.ts";
 import { hashPassword } from "@/lib/password.ts";
 import { ErrorResponse } from "@/schemas/error.ts";
@@ -34,9 +35,9 @@ export const createAccount: FastifyPluginAsyncZod = async (app) => {
       const hashedPassword = await hashPassword(password);
 
       const account = await insertAccount({ email, password: hashedPassword });
-      const token = await signAccountToken(account.id);
+      setAuthCookie(reply, await signAccountToken(account.id));
 
-      return reply.code(HttpStatus.OK).send({ message: "Account created!", email, token });
+      return reply.code(HttpStatus.OK).send({ message: "Account created!", email });
     },
   );
 };
