@@ -96,6 +96,9 @@ importers:
 
   apps/web:
     dependencies:
+      '@hookrelay/shared':
+        specifier: workspace:*
+        version: link:../../packages/shared
       '@tanstack/react-query':
         specifier: ^5.108.2
         version: 5.108.2(@types/react@19.3.0)(react@19.3.1)

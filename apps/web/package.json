@@ -9,6 +9,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@hookrelay/shared": "workspace:*",
     "@tanstack/react-query": "^5.108.2",
     "axios": "^1.21.1",
     "react": "^19.3.1",
