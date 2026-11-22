@@ -1,9 +1,10 @@
 import { Route, Routes } from "react-router";
 
+import { AppLayout } from "../components/layout/AppLayout.tsx";
+import { ApplicationsPage } from "../features/applications/ApplicationsPage.tsx";
 import { LoginPage } from "../features/auth/LoginPage.tsx";
 import { SignupPage } from "../features/auth/SignupPage.tsx";
 import { LandingPage } from "../features/landing/LandingPage.tsx";
-import { HomePage } from "../pages/HomePage.tsx";
 import { GuestOnly, RequireAuth } from "./guards.tsx";
 import { paths } from "./paths.ts";
 
@@ -19,9 +20,11 @@ export function AppRoutes() {
         <Route path={paths.signup} element={<SignupPage />} />
       </Route>
 
-      {/* Only for logged-in users. */}
+      {/* Only for logged-in users, inside the app frame. */}
       <Route element={<RequireAuth />}>
-        <Route path={paths.applications} element={<HomePage />} />
+        <Route element={<AppLayout />}>
+          <Route path={paths.applications} element={<ApplicationsPage />} />
+        </Route>
       </Route>
     </Routes>
   );
