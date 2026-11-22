@@ -20,3 +20,22 @@ export function useCreateApplication() {
     onSuccess: () => queryClient.invalidateQueries({ queryKey: applicationsKey }),
   });
 }
+
+export function useUpdateApplication() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ id, name }: { id: string; name: string }) =>
+      apiClient.application.update(id, { name }),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: applicationsKey }),
+  });
+}
+
+export function useDeleteApplication() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: apiClient.application.delete,
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: applicationsKey }),
+  });
+}

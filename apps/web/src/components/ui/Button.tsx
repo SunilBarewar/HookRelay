@@ -4,7 +4,7 @@ import { Link } from "react-router";
 import { cx } from "../../lib/cx.ts";
 import { Spinner } from "./Spinner.tsx";
 
-type Variant = "primary" | "secondary";
+type Variant = "primary" | "secondary" | "danger";
 type Size = "md" | "lg";
 
 interface StyleProps {
@@ -15,6 +15,7 @@ interface StyleProps {
 const variants: Record<Variant, string> = {
   primary: "bg-brand-600 text-white shadow-sm hover:bg-brand-700",
   secondary: "border border-slate-300 bg-white text-slate-700 shadow-sm hover:bg-slate-50",
+  danger: "bg-red-600 text-white shadow-sm hover:bg-red-700 focus-visible:outline-red-600",
 };
 
 const sizes: Record<Size, string> = {

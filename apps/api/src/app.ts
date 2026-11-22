@@ -19,7 +19,11 @@ export function buildApp() {
 
   registerErrorHandler(app);
   app.register(cookie);
-  app.register(cors, { origin: Config.WEB_ORIGIN, credentials: true });
+  app.register(cors, {
+    origin: Config.WEB_ORIGIN,
+    credentials: true,
+    methods: ["GET", "HEAD", "POST", "PATCH", "DELETE"],
+  });
   app.register(registerAuth);
   app.register(registerQueue);
 

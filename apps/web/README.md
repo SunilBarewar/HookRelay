@@ -13,7 +13,7 @@ Built with React 19, Vite, TypeScript, Tailwind CSS v4, React Router and TanStac
 | Sign up (`/signup`) and log in (`/login`)                                 | Done    |
 | List applications (`/applications`), with loading, empty and error states | Done    |
 | Create applications (dialog on `/applications`)                           | Done    |
-| Edit and delete applications                                              | Planned |
+| Rename and delete applications (row actions and dialogs)                  | Done    |
 | List endpoints in an application                                          | Planned |
 | Create, edit, enable or disable, delete endpoints                         | Planned |
 | List the events sent to an endpoint                                       | Planned |
@@ -117,12 +117,12 @@ src/
 ├── index.css            Tailwind import, Inter font and brand colour tokens
 ├── routes/              Route table, guards and paths
 ├── features/
-│   ├── applications/    Applications list page, create dialog, hooks and states
+│   ├── applications/    Applications list, create, rename and delete dialogs, hooks and states
 │   ├── auth/            Login, signup, session hooks and the shared credentials form
 │   └── landing/         Landing page sections
 ├── components/
 │   ├── layout/          AppLayout: header and frame for logged-in screens
-│   └── ui/              Button, ButtonLink, TextField, Dialog, EmptyState, Logo and Spinner
+│   └── ui/              Button, ButtonLink, IconButton, TextField, Dialog, EmptyState, Logo and Spinner
 └── lib/
     ├── api/             apiClient: http.ts, resources.ts, types.ts
     ├── query-client.ts  React Query defaults

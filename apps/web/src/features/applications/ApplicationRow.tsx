@@ -1,23 +1,39 @@
+import { IconButton } from "../../components/ui/IconButton.tsx";
 import { cx } from "../../lib/cx.ts";
 import type { ApplicationResponse } from "../../lib/api/index.ts";
 
 const dateFormat = new Intl.DateTimeFormat(undefined, { dateStyle: "medium" });
 
+const iconProps = {
+  className: "size-[18px]",
+  viewBox: "0 0 24 24",
+  fill: "none",
+  stroke: "currentColor",
+  strokeWidth: 1.75,
+  strokeLinecap: "round",
+  strokeLinejoin: "round",
+  "aria-hidden": true,
+} as const;
+
 interface ApplicationRowProps {
   application: ApplicationResponse;
-  /** Briefly tint the row, to point out an application that was just created. */
+  /** Briefly tint the row, to point out an application that was just created or renamed. */
   highlighted?: boolean;
+  onEdit: () => void;
+  onDelete: () => void;
 }
 
-export function ApplicationRow({ application, highlighted = false }: ApplicationRowProps) {
+export function ApplicationRow({
+  application,
+  highlighted = false,
+  onEdit,
+  onDelete,
+}: ApplicationRowProps) {
   return (
     <li
-      className={cx(
-        "flex flex-col gap-1 px-5 py-4 sm:flex-row sm:items-center sm:justify-between sm:gap-6",
-        highlighted && "animate-highlight",
-      )}
+      className={cx("flex items-center gap-3 py-3 pr-3 pl-5", highlighted && "animate-highlight")}
     >
-      <div className="min-w-0">
+      <div className="min-w-0 flex-1">
         <p className="truncate text-[15px] font-semibold text-slate-900">{application.name}</p>
         <p className="mt-0.5 text-[13px] text-slate-500">
           Created{" "}
@@ -25,11 +41,34 @@ export function ApplicationRow({ application, highlighted = false }: Application
             {dateFormat.format(new Date(application.createdAt))}
           </time>
         </p>
+        {/* Narrow screens show the ID under the date; wide ones give it its own column. */}
+        <p className="mt-1 font-mono text-xs break-all text-slate-500 lg:hidden">
+          <span className="sr-only">Application ID: </span>
+          {application.id}
+        </p>
       </div>
-      <p className="font-mono text-xs break-all text-slate-500 sm:text-right">
+
+      <p className="hidden font-mono text-xs text-slate-500 lg:block">
         <span className="sr-only">Application ID: </span>
         {application.id}
       </p>
+
+      <div className="flex shrink-0 items-center">
+        <IconButton label={`Rename ${application.name}`} onClick={onEdit}>
+          <svg {...iconProps}>
+            <path d="M12 20h9" />
+            <path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5Z" />
+          </svg>
+        </IconButton>
+        <IconButton label={`Delete ${application.name}`} tone="danger" onClick={onDelete}>
+          <svg {...iconProps}>
+            <path d="M3 6h18" />
+            <path d="M8 6V4h8v2" />
+            <path d="M19 6l-1 14H6L5 6" />
+            <path d="M10 11v5M14 11v5" />
+          </svg>
+        </IconButton>
+      </div>
     </li>
   );
 }
