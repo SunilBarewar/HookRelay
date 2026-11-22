@@ -13,8 +13,11 @@ export type {
   CreateEventResponse,
   CredentialsBody,
   DeliveryStatus,
+  EndpointListResponse,
   EndpointResponse,
+  EndpointStatus,
   MessageResponse,
   UpdateAccountBody,
   UpdateApplicationBody,
+  UpdateEndpointBody,
 } from "@hookrelay/shared/schemas";

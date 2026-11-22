@@ -10,6 +10,9 @@ import type {
   CreateEndpointResponse,
   CreateEventBody,
   CreateEventResponse,
+  EndpointListResponse,
+  EndpointResponse,
+  UpdateEndpointBody,
   CredentialsBody,
   MessageResponse,
   UpdateAccountBody,
@@ -47,6 +50,21 @@ export const application = {
 };
 
 export const endpoint = {
+  list: async (applicationId: string) =>
+    (await http.get<EndpointListResponse>(`/v1/applications/${applicationId}/endpoints`)).data,
+  update: async (applicationId: string, endpointId: string, input: UpdateEndpointBody) =>
+    (
+      await http.patch<EndpointResponse>(
+        `/v1/applications/${applicationId}/endpoints/${endpointId}`,
+        input,
+      )
+    ).data,
+  delete: async (applicationId: string, endpointId: string) =>
+    (
+      await http.delete<MessageResponse>(
+        `/v1/applications/${applicationId}/endpoints/${endpointId}`,
+      )
+    ).data,
   create: async (applicationId: string, input: CreateEndpointBody) =>
     (await http.post<CreateEndpointResponse>(`/v1/applications/${applicationId}/endpoints`, input))
       .data,
