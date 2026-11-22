@@ -14,6 +14,7 @@ import type {
   EndpointResponse,
   UpdateEndpointBody,
   CredentialsBody,
+  DeliveryListResponse,
   MessageResponse,
   UpdateAccountBody,
   UpdateApplicationBody,
@@ -78,4 +79,19 @@ export const event = {
         input,
       )
     ).data.data,
+};
+
+export const delivery = {
+  /** The events delivered to an endpoint, newest first. Pass the last page's `nextCursor` for older ones. */
+  list: async (
+    applicationId: string,
+    endpointId: string,
+    params: { cursor?: string; limit?: number } = {},
+  ) =>
+    (
+      await http.get<DeliveryListResponse>(
+        `/v1/applications/${applicationId}/endpoints/${endpointId}/deliveries`,
+        { params },
+      )
+    ).data,
 };

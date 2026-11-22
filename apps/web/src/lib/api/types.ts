@@ -12,6 +12,8 @@ export type {
   CreateEventBody,
   CreateEventResponse,
   CredentialsBody,
+  DeliveryListResponse,
+  DeliveryResponse,
   DeliveryStatus,
   EndpointListResponse,
   EndpointResponse,
