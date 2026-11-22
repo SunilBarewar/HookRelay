@@ -12,15 +12,17 @@ Built with React 19, Vite, TypeScript, Tailwind CSS v4, React Router and TanStac
 | Landing page (`/`)                                                        | Done    |
 | Sign up (`/signup`) and log in (`/login`)                                 | Done    |
 | List applications (`/applications`), with loading, empty and error states | Done    |
-| Create, edit and delete applications                                      | Planned |
+| Create applications (dialog on `/applications`)                           | Done    |
+| Edit and delete applications                                              | Planned |
 | List endpoints in an application                                          | Planned |
 | Create, edit, enable or disable, delete endpoints                         | Planned |
 | List the events sent to an endpoint                                       | Planned |
 
 Creating events is not part of this app. Events are published through the API or the SDK.
 
-Several planned screens need API routes that don't exist yet, such as listing applications. The API
-client already includes `application.list()`, which will return 404 until that route is added.
+The API can already list, create, rename and delete applications. The endpoint and event screens still
+need routes that don't exist yet: listing, updating and deleting endpoints, and listing events and
+deliveries.
 
 ## Running it
 
@@ -115,12 +117,12 @@ src/
 ├── index.css            Tailwind import, Inter font and brand colour tokens
 ├── routes/              Route table, guards and paths
 ├── features/
-│   ├── applications/    Applications list page, its hooks and states
+│   ├── applications/    Applications list page, create dialog, hooks and states
 │   ├── auth/            Login, signup, session hooks and the shared credentials form
 │   └── landing/         Landing page sections
 ├── components/
 │   ├── layout/          AppLayout: header and frame for logged-in screens
-│   └── ui/              Button, ButtonLink, TextField, EmptyState, Logo and Spinner
+│   └── ui/              Button, ButtonLink, TextField, Dialog, EmptyState, Logo and Spinner
 └── lib/
     ├── api/             apiClient: http.ts, resources.ts, types.ts
     ├── query-client.ts  React Query defaults
