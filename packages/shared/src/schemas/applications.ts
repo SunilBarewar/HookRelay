@@ -17,3 +17,6 @@ export const ApplicationResponse = z.object({
   updatedAt: z.iso.datetime(),
 });
 export type ApplicationResponse = z.infer<typeof ApplicationResponse>;
+
+export const ApplicationListResponse = z.array(ApplicationResponse);
+export type ApplicationListResponse = z.infer<typeof ApplicationListResponse>;
