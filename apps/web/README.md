@@ -7,23 +7,26 @@ Built with React 19, Vite, TypeScript, Tailwind CSS v4, React Router and TanStac
 
 ## What's built
 
-| Screen                                                                    | Status  |
-| ------------------------------------------------------------------------- | ------- |
-| Landing page (`/`)                                                        | Done    |
-| Sign up (`/signup`) and log in (`/login`)                                 | Done    |
-| List applications (`/applications`), with loading, empty and error states | Done    |
-| Create applications (dialog on `/applications`)                           | Done    |
-| Rename and delete applications (row actions and dialogs)                  | Done    |
-| List an application's endpoints (`/applications/:applicationId`)          | Done    |
-| Edit, enable or disable, and delete endpoints (row actions and dialogs)   | Done    |
-| Create endpoints, with a one-time view of the signing secret              | Done    |
-| List the events sent to an endpoint                                       | Planned |
+| Screen                                                                                          | Status |
+| ----------------------------------------------------------------------------------------------- | ------ |
+| Landing page (`/`)                                                                              | Done   |
+| Sign up (`/signup`) and log in (`/login`)                                                       | Done   |
+| List applications (`/applications`), with loading, empty and error states                       | Done   |
+| Create applications (dialog on `/applications`)                                                 | Done   |
+| Rename and delete applications (row actions and dialogs)                                        | Done   |
+| List an application's endpoints (`/applications/:applicationId`)                                | Done   |
+| Edit, enable or disable, and delete endpoints (row actions and dialogs)                         | Done   |
+| Create endpoints, with a one-time view of the signing secret                                    | Done   |
+| List the events delivered to an endpoint (`/applications/:applicationId/endpoints/:endpointId`) | Done   |
 
 Creating events is not part of this app. Events are published through the API or the SDK.
 
-The API can list, create, rename and delete applications, and list, create, edit and delete
-endpoints. The events screen still needs routes that don't exist yet: listing events and their
-deliveries.
+The API can list, create, rename and delete applications, list, create, edit and delete endpoints,
+and list the events delivered to an endpoint.
+
+The events page shows one row per delivery, with the outcome of its **latest** attempt: HookRelay
+stores only that, not a history of every attempt. It refreshes itself every few seconds while any
+delivery is still pending or waiting for a retry, and loads older events 25 at a time.
 
 An endpoint's signing secret is returned only when the endpoint is created, and the API has no way
 to show or rotate it later. The create dialog therefore ends on a screen that shows the secret and
@@ -124,6 +127,7 @@ src/
 ├── features/
 │   ├── applications/    Applications list, create, rename and delete dialogs, hooks and states
 │   ├── auth/            Login, signup, session hooks and the shared credentials form
+│   ├── deliveries/      The events delivered to one endpoint: list, expandable rows, status badge
 │   ├── endpoints/       An application's endpoints: list, create, edit and delete dialogs, signing secret view
 │   └── landing/         Landing page sections
 ├── components/
