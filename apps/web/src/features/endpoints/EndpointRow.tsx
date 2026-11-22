@@ -1,5 +1,8 @@
+import { Link } from "react-router";
+
 import { IconButton } from "../../components/ui/IconButton.tsx";
 import { cx } from "../../lib/cx.ts";
+import { endpointPath } from "../../routes/paths.ts";
 import type { EndpointResponse } from "../../lib/api/index.ts";
 import { StatusBadge } from "./StatusBadge.tsx";
 
@@ -29,8 +32,13 @@ export function EndpointRow({ endpoint, highlighted = false, onEdit, onDelete }:
     <li className={cx("flex items-start gap-3 py-4 pr-3 pl-5", highlighted && "animate-highlight")}>
       <div className="min-w-0 flex-1 space-y-2">
         <div className="flex flex-wrap items-center gap-x-3 gap-y-1.5">
-          <p className="min-w-0 text-[15px] font-semibold break-all text-slate-900">
-            {endpoint.url}
+          <p className="min-w-0 text-[15px] font-semibold break-all">
+            <Link
+              to={endpointPath(endpoint.applicationId, endpoint.id)}
+              className="rounded text-slate-900 hover:text-brand-700 hover:underline"
+            >
+              {endpoint.url}
+            </Link>
           </p>
           <StatusBadge status={endpoint.status} />
         </div>
@@ -55,6 +63,13 @@ export function EndpointRow({ endpoint, highlighted = false, onEdit, onDelete }:
           <time dateTime={endpoint.createdAt}>
             {dateFormat.format(new Date(endpoint.createdAt))}
           </time>
+          {" · "}
+          <Link
+            to={endpointPath(endpoint.applicationId, endpoint.id)}
+            className="rounded font-medium text-brand-700 hover:underline"
+          >
+            View events
+          </Link>
         </p>
       </div>
 
