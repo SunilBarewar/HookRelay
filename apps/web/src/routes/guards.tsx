@@ -1,8 +1,9 @@
 import { Navigate, Outlet } from "react-router";
 
-import { Button } from "../../components/ui/Button.tsx";
-import { Spinner } from "../../components/ui/Spinner.tsx";
-import { useSession } from "./hooks.ts";
+import { Button } from "../components/ui/Button.tsx";
+import { Spinner } from "../components/ui/Spinner.tsx";
+import { useSession } from "../features/auth/hooks.ts";
+import { paths } from "./paths.ts";
 
 function FullPageStatus({ children }: { children: React.ReactNode }) {
   return (
@@ -28,7 +29,7 @@ export function GuestOnly() {
   const session = useSession();
 
   if (session.isPending) return <CheckingSession />;
-  if (session.data) return <Navigate to="/applications" replace />;
+  if (session.data) return <Navigate to={paths.applications} replace />;
   return <Outlet />;
 }
 
@@ -51,6 +52,6 @@ export function RequireAuth() {
     );
   }
 
-  if (!session.data) return <Navigate to="/login" replace />;
+  if (!session.data) return <Navigate to={paths.login} replace />;
   return <Outlet />;
 }

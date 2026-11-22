@@ -5,6 +5,7 @@ import { AuthLayout } from "./AuthLayout.tsx";
 import { CredentialsForm } from "./CredentialsForm.tsx";
 import { describeApiError, type FormError } from "./errors.ts";
 import { useSignup } from "./hooks.ts";
+import { paths } from "../../routes/paths.ts";
 
 function describeSignupError(error: unknown): FormError {
   if (error instanceof ApiError && error.status === 409) {
@@ -27,7 +28,7 @@ export function SignupPage() {
       footer={
         <>
           Already have an account?{" "}
-          <Link to="/login" className="font-semibold text-brand-600 hover:text-brand-700">
+          <Link to={paths.login} className="font-semibold text-brand-600 hover:text-brand-700">
             Log in
           </Link>
         </>

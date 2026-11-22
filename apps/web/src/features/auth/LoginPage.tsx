@@ -5,6 +5,7 @@ import { AuthLayout } from "./AuthLayout.tsx";
 import { CredentialsForm } from "./CredentialsForm.tsx";
 import { describeApiError, type FormError } from "./errors.ts";
 import { useLogin } from "./hooks.ts";
+import { paths } from "../../routes/paths.ts";
 
 function describeLoginError(error: unknown): FormError {
   if (error instanceof ApiError && error.status === 401) {
@@ -24,7 +25,7 @@ export function LoginPage() {
       footer={
         <>
           New to HookRelay?{" "}
-          <Link to="/signup" className="font-semibold text-brand-600 hover:text-brand-700">
+          <Link to={paths.signup} className="font-semibold text-brand-600 hover:text-brand-700">
             Create an account
           </Link>
         </>

@@ -1,4 +1,5 @@
 import { ButtonLink } from "../../components/ui/Button.tsx";
+import { paths } from "../../routes/paths.ts";
 
 export function FinalCta() {
   return (
@@ -14,10 +15,10 @@ export function FinalCta() {
           Create an account, add an endpoint, and publish an event. HookRelay takes it from there.
         </p>
         <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
-          <ButtonLink to="/signup" size="lg">
+          <ButtonLink to={paths.signup} size="lg">
             Create an account
           </ButtonLink>
-          <ButtonLink to="/login" size="lg" variant="secondary">
+          <ButtonLink to={paths.login} size="lg" variant="secondary">
             Log in
           </ButtonLink>
         </div>
