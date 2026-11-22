@@ -136,3 +136,16 @@ export async function deleteEndpoint(applicationId: string, endpointId: string):
 
   return deleted.length > 0;
 }
+
+/** An endpoint, if it belongs to the application. */
+export async function getEndpointInApplication(
+  applicationId: string,
+  endpointId: string,
+): Promise<Endpoint | undefined> {
+  const [endpoint] = await db
+    .select()
+    .from(endpoints)
+    .where(and(eq(endpoints.id, endpointId), eq(endpoints.applicationId, applicationId)));
+
+  return endpoint;
+}
