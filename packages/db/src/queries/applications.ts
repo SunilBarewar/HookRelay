@@ -1,4 +1,4 @@
-import { and, eq } from "drizzle-orm";
+import { and, desc, eq } from "drizzle-orm";
 import { db } from "../instance.ts";
 import { applications, type Application, type NewApplication } from "../schema/index.ts";
 
@@ -12,8 +12,13 @@ export async function getApplicationById(appId: string) {
   return res[0] ?? null;
 }
 
-export async function getApplications(accountId: string) {
-  return db.select().from(applications).where(eq(applications.accountId, accountId));
+/** The account's applications, newest first. */
+export async function getApplications(accountId: string): Promise<Application[]> {
+  return db
+    .select()
+    .from(applications)
+    .where(eq(applications.accountId, accountId))
+    .orderBy(desc(applications.createdAt));
 }
 
 export async function updateApplication(
