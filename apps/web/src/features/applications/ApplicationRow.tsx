@@ -1,5 +1,6 @@
 import { Link } from "react-router";
 
+import { CopyButton } from "../../components/ui/CopyButton.tsx";
 import { IconButton } from "../../components/ui/IconButton.tsx";
 import { cx } from "../../lib/cx.ts";
 import { applicationPath } from "../../routes/paths.ts";
@@ -50,20 +51,18 @@ export function ApplicationRow({
           <time dateTime={application.createdAt}>
             {dateFormat.format(new Date(application.createdAt))}
           </time>
-        </p>
-        {/* Narrow screens show the ID under the date; wide ones give it its own column. */}
-        <p className="mt-1 font-mono text-xs break-all text-slate-500 lg:hidden">
-          <span className="sr-only">Application ID: </span>
-          {application.id}
+          {" · "}
+          <Link
+            to={applicationPath(application.id)}
+            className="rounded font-medium text-brand-700 hover:underline"
+          >
+            View endpoints<span className="sr-only"> for {application.name}</span>
+          </Link>
         </p>
       </div>
 
-      <p className="hidden font-mono text-xs text-slate-500 lg:block">
-        <span className="sr-only">Application ID: </span>
-        {application.id}
-      </p>
-
       <div className="flex shrink-0 items-center">
+        <CopyButton value={application.id} label={`Copy application ID`} />
         <IconButton label={`Rename ${application.name}`} onClick={onEdit}>
           <svg {...iconProps}>
             <path d="M12 20h9" />
