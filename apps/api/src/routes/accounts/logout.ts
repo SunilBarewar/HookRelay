@@ -10,7 +10,7 @@ export const logout: FastifyPluginAsyncZod = async (app) => {
     {
       schema: {
         tags: ["accounts"],
-        summary: "Log out by clearing the auth cookie",
+        summary: "Log out",
         response: { [HttpStatus.OK]: MessageResponse },
       },
     },
