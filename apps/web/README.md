@@ -7,15 +7,15 @@ Built with React 19, Vite, TypeScript, Tailwind CSS v4, React Router and TanStac
 
 ## What's built
 
-| Screen                                                 | Status  |
-| ------------------------------------------------------ | ------- |
-| Landing page (`/`)                                     | Done    |
-| Sign up (`/signup`) and log in (`/login`)              | Done    |
-| Placeholder home for logged-in users (`/applications`) | Done    |
-| Create, edit, delete and list applications             | Planned |
-| List endpoints in an application                       | Planned |
-| Create, edit, enable or disable, delete endpoints      | Planned |
-| List the events sent to an endpoint                    | Planned |
+| Screen                                                                    | Status  |
+| ------------------------------------------------------------------------- | ------- |
+| Landing page (`/`)                                                        | Done    |
+| Sign up (`/signup`) and log in (`/login`)                                 | Done    |
+| List applications (`/applications`), with loading, empty and error states | Done    |
+| Create, edit and delete applications                                      | Planned |
+| List endpoints in an application                                          | Planned |
+| Create, edit, enable or disable, delete endpoints                         | Planned |
+| List the events sent to an endpoint                                       | Planned |
 
 Creating events is not part of this app. Events are published through the API or the SDK.
 
@@ -115,10 +115,12 @@ src/
 ├── index.css            Tailwind import, Inter font and brand colour tokens
 ├── routes/              Route table, guards and paths
 ├── features/
+│   ├── applications/    Applications list page, its hooks and states
 │   ├── auth/            Login, signup, session hooks and the shared credentials form
 │   └── landing/         Landing page sections
-├── pages/               Pages that don't belong to a feature yet
-├── components/ui/       Button, ButtonLink, TextField, Logo and Spinner
+├── components/
+│   ├── layout/          AppLayout: header and frame for logged-in screens
+│   └── ui/              Button, ButtonLink, TextField, EmptyState, Logo and Spinner
 └── lib/
     ├── api/             apiClient: http.ts, resources.ts, types.ts
     ├── query-client.ts  React Query defaults
@@ -132,7 +134,7 @@ area. Anything used by more than one feature lives in `components/ui` or `lib`.
 
 1. Create `src/features/<name>/` with the page and its components.
 2. Add the URL to `src/routes/paths.ts`.
-3. Add the route to `src/routes/AppRoutes.tsx`, inside `RequireAuth` if it needs a login.
+3. Add the route to `src/routes/AppRoutes.tsx`. Logged-in screens go inside `RequireAuth` and `AppLayout`.
 4. Add any missing API call to `src/lib/api/resources.ts`.
 5. Fetch with TanStack Query, and show loading, empty and error states.
 
