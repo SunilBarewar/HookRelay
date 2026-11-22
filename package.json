@@ -6,6 +6,7 @@
     "build": "pnpm -r run build",
     "dev:api": "pnpm --filter @hookrelay/api dev",
     "dev:worker": "pnpm --filter @hookrelay/worker dev",
+    "dev:web": "pnpm --filter web dev",
     "db:generate": "pnpm --filter @hookrelay/db db:generate",
     "db:migrate": "pnpm --filter @hookrelay/db db:migrate",
     "lint": "oxlint",
