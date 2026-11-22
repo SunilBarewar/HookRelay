@@ -4,4 +4,5 @@ import { account, application, auth, endpoint, event } from "./resources.ts";
 export const apiClient = { auth, account, application, endpoint, event };
 
 export { ApiError } from "./http.ts";
+export { errorMessage } from "./error-message.ts";
 export type * from "./types.ts";
