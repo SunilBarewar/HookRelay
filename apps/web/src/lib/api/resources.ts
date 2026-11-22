@@ -2,6 +2,7 @@ import { http } from "./http.ts";
 import type {
   AccountResponse,
   ApiKeyResponse,
+  ApplicationListResponse,
   ApplicationResponse,
   AuthResponse,
   CreateApplicationBody,
@@ -37,8 +38,7 @@ export const account = {
 };
 
 export const application = {
-  // NOTE: the API has no list route yet (GET /v1/applications); this 404s until it's added.
-  list: async () => (await http.get<ApplicationResponse[]>("/v1/applications")).data,
+  list: async () => (await http.get<ApplicationListResponse>("/v1/applications")).data,
   create: async (input: CreateApplicationBody) =>
     (await http.post<ApplicationResponse>("/v1/applications", input)).data,
   update: async (id: string, input: UpdateApplicationBody) =>

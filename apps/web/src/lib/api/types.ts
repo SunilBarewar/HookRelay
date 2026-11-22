@@ -3,6 +3,7 @@
 export type {
   AccountResponse,
   ApiKeyResponse,
+  ApplicationListResponse,
   ApplicationResponse,
   AuthResponse,
   CreateApplicationBody,
