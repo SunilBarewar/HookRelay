@@ -1,8 +1,9 @@
-import { getApplicationById, insertEvent } from "@hookrelay/db";
+import { insertEvent } from "@hookrelay/db";
 import { enqueueDeliveries } from "@hookrelay/queue";
-import { ErrorCode, HttpStatus, NotFoundError } from "@hookrelay/shared";
+import { HttpStatus } from "@hookrelay/shared";
 import type { FastifyPluginAsyncZod } from "fastify-type-provider-zod";
 
+import { requireOwnedApplication } from "@/lib/require-application.ts";
 import { ErrorResponse, applicationErrorResponses } from "@/schemas/error.ts";
 import { successResponse, toSuccessResponse } from "@/schemas/response.ts";
 import { bearerAuthSecurity } from "@/schemas/security.ts";
@@ -27,12 +28,10 @@ export const createEvent: FastifyPluginAsyncZod = async (app) => {
       },
     },
     async (request, reply) => {
-      const application = await getApplicationById(request.params.applicationId);
-
-      // Same 404 for "missing" and "someone else's" so ids can't be probed.
-      if (!application || application.accountId !== request.accountId) {
-        throw new NotFoundError("Application not found", { code: ErrorCode.NOT_FOUND });
-      }
+      const application = await requireOwnedApplication(
+        request.params.applicationId,
+        request.accountId,
+      );
 
       const event = await insertEvent({
         applicationId: application.id,

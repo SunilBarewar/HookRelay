@@ -1,25 +1,14 @@
-import { getApplicationById, insertEndpoint } from "@hookrelay/db";
-import { ErrorCode, HttpStatus, NotFoundError } from "@hookrelay/shared";
+import { insertEndpoint } from "@hookrelay/db";
+import { HttpStatus } from "@hookrelay/shared";
 import type { FastifyPluginAsyncZod } from "fastify-type-provider-zod";
 
-import { getEndpointUrlError } from "@/lib/endpoint-url.ts";
+import { requireOwnedApplication } from "@/lib/require-application.ts";
 import { generateSigningSecret } from "@/lib/signing-secret.ts";
 import { ErrorResponse, applicationErrorResponses } from "@/schemas/error.ts";
 import { bearerAuthSecurity } from "@/schemas/security.ts";
-import {
-  ApplicationParams,
-  CreateEndpointBody as BaseCreateEndpointBody,
-  CreateEndpointResponse,
-} from "@hookrelay/shared/schemas";
+import { ApplicationParams, CreateEndpointResponse } from "@hookrelay/shared/schemas";
+import { CreateEndpointBody } from "./checked-bodies.ts";
 import { toEndpointResponse } from "./endpoints-mappers.ts";
-
-/** The shared schema plus the environment-dependent URL rules (https only in production). */
-const CreateEndpointBody = BaseCreateEndpointBody.extend({
-  url: BaseCreateEndpointBody.shape.url.superRefine((value, ctx) => {
-    const message = getEndpointUrlError(value);
-    if (message) ctx.addIssue({ code: "custom", message });
-  }),
-});
 
 export const createEndpoint: FastifyPluginAsyncZod = async (app) => {
   app.post(
@@ -39,12 +28,10 @@ export const createEndpoint: FastifyPluginAsyncZod = async (app) => {
       },
     },
     async (request, reply) => {
-      const application = await getApplicationById(request.params.applicationId);
-
-      // Same 404 for "missing" and "someone else's" so ids can't be probed.
-      if (!application || application.accountId !== request.accountId) {
-        throw new NotFoundError("Application not found", { code: ErrorCode.NOT_FOUND });
-      }
+      const application = await requireOwnedApplication(
+        request.params.applicationId,
+        request.accountId,
+      );
 
       const signingSecret = generateSigningSecret();
 
