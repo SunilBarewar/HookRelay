@@ -1,6 +1,9 @@
+import { useEffect, useRef, useState } from "react";
+
 import { Button } from "../../components/ui/Button.tsx";
 import { EmptyState } from "../../components/ui/EmptyState.tsx";
-import { errorMessage } from "../../lib/api/index.ts";
+import { errorMessage, type ApplicationResponse } from "../../lib/api/index.ts";
+import { CreateApplicationDialog } from "./CreateApplicationDialog.tsx";
 import { ApplicationRow } from "./ApplicationRow.tsx";
 import { ApplicationsSkeleton } from "./ApplicationsSkeleton.tsx";
 import { useApplications } from "./hooks.ts";
@@ -21,19 +24,73 @@ const stackIcon = (
   </svg>
 );
 
+const plusIcon = (
+  <svg
+    className="size-4"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth={2}
+    strokeLinecap="round"
+    aria-hidden="true"
+  >
+    <path d="M12 5v14M5 12h14" />
+  </svg>
+);
+
+function NewApplicationButton({
+  onClick,
+  ref,
+}: {
+  onClick: () => void;
+  ref?: React.Ref<HTMLButtonElement>;
+}) {
+  return (
+    <Button ref={ref} onClick={onClick}>
+      {plusIcon}
+      New application
+    </Button>
+  );
+}
+
 export function ApplicationsPage() {
   const applications = useApplications();
+  const [creating, setCreating] = useState(false);
+  const [created, setCreated] = useState<ApplicationResponse>();
+  const hasApplications = applications.isSuccess && applications.data.length > 0;
+
+  const headerButtonRef = useRef<HTMLButtonElement>(null);
+  const restoreFocus = useRef(false);
+
+  // Creating the first application replaces the empty-state button that opened the dialog, so
+  // there is nothing to return focus to. Move it to the header button instead of losing it.
+  useEffect(() => {
+    if (!restoreFocus.current) return;
+    restoreFocus.current = false;
+    if (document.activeElement === document.body) headerButtonRef.current?.focus();
+  }, [creating]);
 
   return (
     <>
       <title>Applications · HookRelay</title>
 
-      <div className="mb-8">
-        <h1 className="text-2xl font-semibold tracking-tight text-slate-900">Applications</h1>
-        <p className="mt-1.5 max-w-2xl text-[15px] leading-6 text-slate-600">
-          An application groups the endpoints and events for one product or environment.
-        </p>
+      <div className="mb-8 flex flex-wrap items-start justify-between gap-4">
+        <div>
+          <h1 className="text-2xl font-semibold tracking-tight text-slate-900">Applications</h1>
+          <p className="mt-1.5 max-w-2xl text-[15px] leading-6 text-slate-600">
+            An application groups the endpoints and events for one product or environment.
+          </p>
+        </div>
+        {/* The empty state has its own button, so the header one waits for a first application. */}
+        {hasApplications && (
+          <NewApplicationButton ref={headerButtonRef} onClick={() => setCreating(true)} />
+        )}
       </div>
+
+      {/* Tells screen reader users what the dialog just did. */}
+      <p role="status" className="sr-only">
+        {created ? `Created application ${created.name}` : ""}
+      </p>
 
       {applications.isPending && <ApplicationsSkeleton />}
 
@@ -61,7 +118,8 @@ export function ApplicationsPage() {
           <EmptyState
             icon={stackIcon}
             title="No applications yet"
-            description="Applications you create will be listed here, with the newest first."
+            description="Create an application to start adding endpoints and sending events."
+            action={<NewApplicationButton onClick={() => setCreating(true)} />}
           />
         ) : (
           <section aria-label="Your applications">
@@ -71,11 +129,24 @@ export function ApplicationsPage() {
             </p>
             <ul className="divide-y divide-slate-200 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
               {applications.data.map((application) => (
-                <ApplicationRow key={application.id} application={application} />
+                <ApplicationRow
+                  key={application.id}
+                  application={application}
+                  highlighted={application.id === created?.id}
+                />
               ))}
             </ul>
           </section>
         ))}
+
+      <CreateApplicationDialog
+        open={creating}
+        onClose={() => {
+          restoreFocus.current = true;
+          setCreating(false);
+        }}
+        onCreated={setCreated}
+      />
     </>
   );
 }
