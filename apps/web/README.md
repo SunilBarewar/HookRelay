@@ -1,161 +1,76 @@
 # HookRelay web app
 
-The browser dashboard for HookRelay. It lets people sign up, log in and, as the screens are built,
-manage their applications and endpoints and see how their webhooks were delivered.
+This is the website for HookRelay. It's where people sign up, set up where their webhooks should be
+sent, and check that every webhook arrived.
 
-Built with React 19, Vite, TypeScript, Tailwind CSS v4, React Router and TanStack Query.
+It's built with React, Vite, TypeScript and Tailwind CSS.
 
-## What's built
+## What you can do in the app
 
-| Screen                                                                                          | Status |
-| ----------------------------------------------------------------------------------------------- | ------ |
-| Landing page (`/`)                                                                              | Done   |
-| Sign up (`/signup`) and log in (`/login`)                                                       | Done   |
-| List applications (`/applications`), with loading, empty and error states                       | Done   |
-| Create applications (dialog on `/applications`)                                                 | Done   |
-| Rename and delete applications (row actions and dialogs)                                        | Done   |
-| List an application's endpoints (`/applications/:applicationId`)                                | Done   |
-| Edit, enable or disable, and delete endpoints (row actions and dialogs)                         | Done   |
-| Create endpoints, with a one-time view of the signing secret                                    | Done   |
-| List the events delivered to an endpoint (`/applications/:applicationId/endpoints/:endpointId`) | Done   |
+- **Learn about HookRelay** on the landing page.
+- **Create an account and log in.**
+- **Manage applications.** An application is one product or environment, like "Billing service" or
+  "Checkout (staging)". You can create, rename and delete them, and copy an application's ID.
+- **Manage endpoints.** An endpoint is a web address that receives webhooks. You can add one, change
+  its address or the events it receives, pause it, or delete it. When you add an endpoint you're shown
+  its signing secret once, so copy it then.
+- **See what was sent to an endpoint.** Every event is listed with whether it was delivered, is
+  being retried, or failed. Open one to see the data that was sent and how the receiving server
+  replied. The list updates by itself while deliveries are still in progress.
 
-Creating events is not part of this app. Events are published through the API or the SDK.
-
-The API can list, create, rename and delete applications, list, create, edit and delete endpoints,
-and list the events delivered to an endpoint.
-
-The events page shows one row per delivery, with the outcome of its **latest** attempt: HookRelay
-stores only that, not a history of every attempt. It refreshes itself every few seconds while any
-delivery is still pending or waiting for a retry, and loads older events 25 at a time.
-
-An endpoint's signing secret is returned only when the endpoint is created, and the API has no way
-to show or rotate it later. The create dialog therefore ends on a screen that shows the secret and
-can only be closed with its Done button.
+Sending events isn't done here. Events are sent through the HookRelay API or SDK.
 
 ## Running it
 
-From the repo root:
+From the root of the repo:
 
 ```bash
-pnpm dev:web       # http://localhost:5173
+pnpm dev:web
 ```
 
-The API must be running too (`pnpm dev:api`), and its `WEB_ORIGIN` must match the address you open the
-app on. The default, `http://localhost:5173`, matches the dev server.
+Then open http://localhost:5173. The API needs to be running as well (`pnpm dev:api`).
 
-Scripts, from `apps/web`:
-
-| Script         | What it does                       |
-| -------------- | ---------------------------------- |
-| `pnpm dev`     | Start the dev server               |
-| `pnpm build`   | Typecheck, then build to `dist/`   |
-| `pnpm preview` | Serve the production build locally |
-
-Linting and formatting run from the repo root (`pnpm lint`, `pnpm format`) using the root
-`.oxlintrc.json`.
-
-### Configuration
-
-| Variable       | Default                 | Purpose                      |
-| -------------- | ----------------------- | ---------------------------- |
-| `VITE_API_URL` | `http://localhost:8000` | Address of the HookRelay API |
-
-## How it works
-
-### Authentication
-
-The API stores the login token in an **httpOnly cookie**, so the app never sees or stores it. That has
-a few consequences:
-
-- Requests send the cookie because the axios client uses `withCredentials: true`.
-- The app can't tell whether it's logged in by looking for a token. It asks the API with
-  `apiClient.auth.me()`, and a `401` means logged out. `useSession()` wraps this in a query.
-- Logging in or out only needs to refresh that session query. The route guards then redirect on their own.
-
-In production the app and the API must be on the same site (for example `app.example.com` and
-`api.example.com`), or the browser won't send the cookie.
-
-### Routing
-
-Everything routing-related is in `src/routes/`:
-
-- `paths.ts` lists every URL. Use `paths.login`, not `"/login"`, in links and redirects.
-- `AppRoutes.tsx` is the route table, grouped into public, logged-out-only and logged-in-only routes.
-- `guards.tsx` has `GuestOnly` (redirects logged-in visitors to the app) and `RequireAuth` (redirects
-  logged-out visitors to log in).
-
-### API client
-
-`src/lib/api` exposes one object, grouped by resource:
-
-```ts
-import { apiClient } from "./lib/api/index.ts";
-
-await apiClient.auth.login({ email, password });
-const me = await apiClient.auth.me();
-const apps = await apiClient.application.list();
-await apiClient.endpoint.create(appId, { url, eventTypes: ["order.created"] });
-```
-
-Every call throws an `ApiError` on failure, with `message`, `status`, `code` and `details` taken from the
-API's error response. A missing `status` means the server couldn't be reached.
-
-Use it through TanStack Query (`useQuery` for reads, `useMutation` for writes) so screens get loading
-and error states for free. The query client is in `src/lib/query-client.ts`.
-
-### Shared types
-
-Request and response types are not written by hand. They come from the zod schemas the API itself uses,
-in `@hookrelay/shared`, so a backend change shows up here as a type error. `src/lib/api/types.ts`
-re-exports them, and forms can validate with the same schemas.
-
-Always import from the subpath:
-
-```ts
-import { CredentialsBody } from "@hookrelay/shared/schemas"; // good
-import { CredentialsBody } from "@hookrelay/shared"; // bad: pulls in Node-only code
-```
+If your API isn't at `http://localhost:8000`, set `VITE_API_URL` to its address.
 
 ## Code structure
 
 ```
 src/
-├── main.tsx             Mounts the app with the router and React Query
-├── App.tsx              Renders the routes
-├── index.css            Tailwind import, Inter font and brand colour tokens
-├── routes/              Route table, guards and paths
-├── features/
-│   ├── applications/    Applications list, create, rename and delete dialogs, hooks and states
-│   ├── auth/            Login, signup, session hooks and the shared credentials form
-│   ├── deliveries/      The events delivered to one endpoint: list, expandable rows, status badge
-│   ├── endpoints/       An application's endpoints: list, create, edit and delete dialogs, signing secret view
-│   └── landing/         Landing page sections
-├── components/
-│   ├── layout/          AppLayout: header and frame for logged-in screens
-│   └── ui/              Button, ButtonLink, IconButton, TextField, TextArea, Switch, Dialog, EmptyState, ErrorAlert, ListSkeleton, PlusIcon, Logo and Spinner
-└── lib/
-    ├── api/             apiClient: http.ts, resources.ts, types.ts
-    ├── query-client.ts  React Query defaults
-    ├── use-focus-fallback.ts  Keeps focus from being lost when a dialog's opener disappears
-    └── cx.ts            Class name helper
+├── routes/       Which page shows at which address, and who is allowed to see it
+├── features/     One folder for each part of the app
+│   ├── landing/        The landing page
+│   ├── auth/           Sign up and log in
+│   ├── applications/   The list of applications
+│   ├── endpoints/      An application's endpoints
+│   └── deliveries/     The events sent to an endpoint
+├── components/   Pieces used on many pages, like the page header and buttons
+├── lib/          Helpers, like talking to the API
+└── index.css     The theme: colours and font
 ```
 
-Code is grouped by feature. Each folder under `features/` holds the pages, components and hooks for one
-area. Anything used by more than one feature lives in `components/ui` or `lib`.
-
-## Adding a screen
-
-1. Create `src/features/<name>/` with the page and its components.
-2. Add the URL to `src/routes/paths.ts`.
-3. Add the route to `src/routes/AppRoutes.tsx`. Logged-in screens go inside `RequireAuth` and `AppLayout`.
-4. Add any missing API call to `src/lib/api/resources.ts`.
-5. Fetch with TanStack Query, and show loading, empty and error states.
+Each folder under `features/` holds everything for that part of the app: its pages, its pop-up
+windows and how it gets its data. Anything shared by more than one part goes in `components/` or `lib/`.
 
 ## Design
 
-- **Styling:** Tailwind utility classes. The single brand colour is defined as `brand-*` tokens in
-  `index.css`, so it can be changed in one place.
-- **Components:** small and focused. Use `Button` for actions and `ButtonLink` for navigation.
-- **Forms:** persistent labels, errors shown next to their fields, input kept after a failed submit, and
-  a disabled button with a progress label while a request is running.
-- **Accessibility:** semantic HTML, visible focus, 44px touch targets, and reduced-motion support.
+The look is kept simple and consistent across every page.
+
+- **Colour:** one brand colour (indigo) for the main buttons and links, with greys for everything
+  else. It's set once in `src/index.css`, so changing it there changes it everywhere.
+- **Status colours:** green means good (active, delivered), amber means waiting or retrying, and red
+  means failed or dangerous, like the delete buttons.
+- **Font:** Inter.
+- **Layout:** a plain white and light grey page with rounded boxes. It works on phones as well as
+  large screens.
+- **Forms and pop-up windows:** every field has a visible label, errors appear next to the field in
+  plain words, and what you typed is kept if something goes wrong.
+- **Accessibility:** the whole app works with a keyboard, buttons are big enough to tap, focus is
+  always visible, and animations are switched off for people who ask their device for less motion.
+
+## Good to know
+
+- **Login is kept in a cookie the page can't read.** This keeps it safer, but in production the app and
+  the API need to be on the same website, such as `app.example.com` and `api.example.com`.
+- **An endpoint's signing secret is shown only once,** when you create it. If it's lost, delete the
+  endpoint and create a new one.
+- **The events list shows the latest attempt for each event,** not every attempt along the way.
