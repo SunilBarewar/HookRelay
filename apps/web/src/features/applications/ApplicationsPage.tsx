@@ -1,13 +1,16 @@
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 
 import { Button } from "../../components/ui/Button.tsx";
 import { EmptyState } from "../../components/ui/EmptyState.tsx";
+import { ErrorAlert } from "../../components/ui/ErrorAlert.tsx";
+import { ListSkeleton } from "../../components/ui/ListSkeleton.tsx";
+import { PlusIcon } from "../../components/ui/PlusIcon.tsx";
 import { errorMessage, type ApplicationResponse } from "../../lib/api/index.ts";
+import { useFocusFallback } from "../../lib/use-focus-fallback.ts";
 import { CreateApplicationDialog } from "./CreateApplicationDialog.tsx";
 import { DeleteApplicationDialog } from "./DeleteApplicationDialog.tsx";
 import { EditApplicationDialog } from "./EditApplicationDialog.tsx";
 import { ApplicationRow } from "./ApplicationRow.tsx";
-import { ApplicationsSkeleton } from "./ApplicationsSkeleton.tsx";
 import { useApplications } from "./hooks.ts";
 
 const stackIcon = (
@@ -26,20 +29,6 @@ const stackIcon = (
   </svg>
 );
 
-const plusIcon = (
-  <svg
-    className="size-4"
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth={2}
-    strokeLinecap="round"
-    aria-hidden="true"
-  >
-    <path d="M12 5v14M5 12h14" />
-  </svg>
-);
-
 function NewApplicationButton({
   onClick,
   ref,
@@ -49,7 +38,7 @@ function NewApplicationButton({
 }) {
   return (
     <Button ref={ref} onClick={onClick}>
-      {plusIcon}
+      <PlusIcon />
       New application
     </Button>
   );
@@ -68,22 +57,13 @@ export function ApplicationsPage() {
 
   const headingRef = useRef<HTMLHeadingElement>(null);
   const headerButtonRef = useRef<HTMLButtonElement>(null);
-  const restoreFocus = useRef(false);
 
-  // The control that opened a dialog can disappear while it is open: creating the first
-  // application replaces the empty-state button, and deleting a row removes its buttons. The
-  // browser then has nowhere to return focus, so move it somewhere sensible.
-  useEffect(() => {
-    if (!restoreFocus.current) return;
-    restoreFocus.current = false;
-    if (document.activeElement === document.body) {
-      (headerButtonRef.current ?? headingRef.current)?.focus();
-    }
-  }, [creating, editing, deleting]);
-
-  function dialogClosed() {
-    restoreFocus.current = true;
-  }
+  // Creating the first application replaces the empty-state button that opened the dialog, and
+  // deleting a row removes its buttons, so focus may have nowhere to return to.
+  const dialogClosed = useFocusFallback(`${creating}|${editing?.id}|${deleting?.id}`, [
+    headerButtonRef,
+    headingRef,
+  ]);
 
   return (
     <>
@@ -113,25 +93,15 @@ export function ApplicationsPage() {
         {notice}
       </p>
 
-      {applications.isPending && <ApplicationsSkeleton />}
+      {applications.isPending && <ListSkeleton label="Loading your applications…" />}
 
       {applications.isError && (
-        <div
-          role="alert"
-          className="flex flex-col items-start gap-4 rounded-2xl border border-red-200 bg-red-50 px-6 py-5 sm:flex-row sm:items-center sm:justify-between"
-        >
-          <div>
-            <p className="font-semibold text-red-900">We couldn’t load your applications</p>
-            <p className="mt-1 text-sm text-red-800">{errorMessage(applications.error)}</p>
-          </div>
-          <Button
-            variant="secondary"
-            loading={applications.isFetching}
-            onClick={() => void applications.refetch()}
-          >
-            {applications.isFetching ? "Retrying…" : "Try again"}
-          </Button>
-        </div>
+        <ErrorAlert
+          title="We couldn’t load your applications"
+          message={errorMessage(applications.error)}
+          retrying={applications.isFetching}
+          onRetry={() => void applications.refetch()}
+        />
       )}
 
       {applications.isSuccess &&

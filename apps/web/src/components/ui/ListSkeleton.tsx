@@ -1,7 +1,12 @@
-export function ApplicationsSkeleton() {
+interface ListSkeletonProps {
+  /** Announced to screen readers while the list loads, e.g. "Loading your applications…". */
+  label: string;
+}
+
+export function ListSkeleton({ label }: ListSkeletonProps) {
   return (
     <div role="status" aria-busy="true">
-      <span className="sr-only">Loading your applications…</span>
+      <span className="sr-only">{label}</span>
       <ul
         aria-hidden="true"
         className="divide-y divide-slate-200 overflow-hidden rounded-2xl border border-slate-200 bg-white"
