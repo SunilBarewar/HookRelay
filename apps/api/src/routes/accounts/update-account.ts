@@ -5,12 +5,8 @@ import type { FastifyPluginAsyncZod } from "fastify-type-provider-zod";
 import { hashPassword } from "@/lib/password.ts";
 import { ErrorResponse, protectedErrorResponses } from "@/schemas/error.ts";
 import { bearerAuthSecurity } from "@/schemas/security.ts";
-import {
-  AccountResponse,
-  IdParams,
-  UpdateAccountBody,
-  toAccountResponse,
-} from "./accounts-schemas.ts";
+import { AccountResponse, IdParams, UpdateAccountBody } from "@hookrelay/shared/schemas";
+import { toAccountResponse } from "./accounts-mappers.ts";
 
 export const updateAccountRoute: FastifyPluginAsyncZod = async (app) => {
   app.patch(

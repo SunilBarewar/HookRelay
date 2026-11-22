@@ -4,12 +4,8 @@ import type { FastifyPluginAsyncZod } from "fastify-type-provider-zod";
 
 import { ErrorResponse, applicationErrorResponses } from "@/schemas/error.ts";
 import { bearerAuthSecurity } from "@/schemas/security.ts";
-import {
-  ApplicationResponse,
-  IdParams,
-  UpdateApplicationBody,
-  toApplicationResponse,
-} from "./applications-schemas.ts";
+import { ApplicationResponse, IdParams, UpdateApplicationBody } from "@hookrelay/shared/schemas";
+import { toApplicationResponse } from "./applications-mappers.ts";
 
 export const updateApplicationRoute: FastifyPluginAsyncZod = async (app) => {
   app.patch(

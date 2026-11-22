@@ -4,11 +4,8 @@ import type { FastifyPluginAsyncZod } from "fastify-type-provider-zod";
 
 import { ErrorResponse, protectedErrorResponses } from "@/schemas/error.ts";
 import { bearerAuthSecurity } from "@/schemas/security.ts";
-import {
-  ApplicationResponse,
-  CreateApplicationBody,
-  toApplicationResponse,
-} from "./applications-schemas.ts";
+import { ApplicationResponse, CreateApplicationBody } from "@hookrelay/shared/schemas";
+import { toApplicationResponse } from "./applications-mappers.ts";
 
 export const createApplication: FastifyPluginAsyncZod = async (app) => {
   app.post(

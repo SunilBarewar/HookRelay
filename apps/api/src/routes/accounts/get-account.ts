@@ -4,7 +4,8 @@ import type { FastifyPluginAsyncZod } from "fastify-type-provider-zod";
 
 import { protectedErrorResponses } from "@/schemas/error.ts";
 import { bearerAuthSecurity } from "@/schemas/security.ts";
-import { AccountResponse, IdParams, toAccountResponse } from "./accounts-schemas.ts";
+import { AccountResponse, IdParams } from "@hookrelay/shared/schemas";
+import { toAccountResponse } from "./accounts-mappers.ts";
 
 export const getAccount: FastifyPluginAsyncZod = async (app) => {
   app.get(

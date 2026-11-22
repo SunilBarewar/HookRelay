@@ -2,15 +2,24 @@ import { getApplicationById, insertEndpoint } from "@hookrelay/db";
 import { ErrorCode, HttpStatus, NotFoundError } from "@hookrelay/shared";
 import type { FastifyPluginAsyncZod } from "fastify-type-provider-zod";
 
+import { getEndpointUrlError } from "@/lib/endpoint-url.ts";
 import { generateSigningSecret } from "@/lib/signing-secret.ts";
 import { ErrorResponse, applicationErrorResponses } from "@/schemas/error.ts";
 import { bearerAuthSecurity } from "@/schemas/security.ts";
 import {
   ApplicationParams,
-  CreateEndpointBody,
+  CreateEndpointBody as BaseCreateEndpointBody,
   CreateEndpointResponse,
-  toEndpointResponse,
-} from "./endpoints-schemas.ts";
+} from "@hookrelay/shared/schemas";
+import { toEndpointResponse } from "./endpoints-mappers.ts";
+
+/** The shared schema plus the environment-dependent URL rules (https only in production). */
+const CreateEndpointBody = BaseCreateEndpointBody.extend({
+  url: BaseCreateEndpointBody.shape.url.superRefine((value, ctx) => {
+    const message = getEndpointUrlError(value);
+    if (message) ctx.addIssue({ code: "custom", message });
+  }),
+});
 
 export const createEndpoint: FastifyPluginAsyncZod = async (app) => {
   app.post(

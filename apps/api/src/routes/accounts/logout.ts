@@ -2,7 +2,7 @@ import { HttpStatus } from "@hookrelay/shared";
 import type { FastifyPluginAsyncZod } from "fastify-type-provider-zod";
 
 import { clearAuthCookie } from "@/lib/auth-cookie.ts";
-import { MessageResponse } from "./accounts-schemas.ts";
+import { MessageResponse } from "@hookrelay/shared/schemas";
 
 export const logout: FastifyPluginAsyncZod = async (app) => {
   app.post(

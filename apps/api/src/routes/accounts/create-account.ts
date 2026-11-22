@@ -5,7 +5,7 @@ import { setAuthCookie } from "@/lib/auth-cookie.ts";
 import { signAccountToken } from "@/lib/jwt.ts";
 import { hashPassword } from "@/lib/password.ts";
 import { ErrorResponse } from "@/schemas/error.ts";
-import { AuthResponse, CredentialsBody } from "./accounts-schemas.ts";
+import { AuthResponse, CredentialsBody } from "@hookrelay/shared/schemas";
 import { ConflictError, ErrorCode, HttpStatus } from "@hookrelay/shared";
 
 export const createAccount: FastifyPluginAsyncZod = async (app) => {

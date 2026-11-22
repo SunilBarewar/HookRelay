@@ -6,7 +6,7 @@ import type { FastifyPluginAsyncZod } from "fastify-type-provider-zod";
 import { setAuthCookie } from "@/lib/auth-cookie.ts";
 import { signAccountToken } from "@/lib/jwt.ts";
 import { ErrorResponse } from "@/schemas/error.ts";
-import { AuthResponse, CredentialsBody } from "./accounts-schemas.ts";
+import { AuthResponse, CredentialsBody } from "@hookrelay/shared/schemas";
 import { verifyPassword } from "@/lib/password.ts";
 
 // Compared against when the email is unknown so response time doesn't reveal which emails exist.

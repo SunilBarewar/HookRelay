@@ -5,7 +5,7 @@ import type { FastifyPluginAsyncZod } from "fastify-type-provider-zod";
 import { generateApiKey } from "@/lib/api-key.ts";
 import { protectedErrorResponses } from "@/schemas/error.ts";
 import { bearerAuthSecurity } from "@/schemas/security.ts";
-import { ApiKeyResponse, IdParams } from "./accounts-schemas.ts";
+import { ApiKeyResponse, IdParams } from "@hookrelay/shared/schemas";
 
 export const generateAccountApiKey: FastifyPluginAsyncZod = async (app) => {
   app.post(
