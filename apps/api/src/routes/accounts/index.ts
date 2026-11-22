@@ -6,12 +6,15 @@ import { deleteAccountRoute } from "./delete-account.ts";
 import { generateAccountApiKey } from "./generate-api-key.ts";
 import { getAccount } from "./get-account.ts";
 import { login } from "./login.ts";
+import { getMe } from "./me.ts";
+import { logout } from "./logout.ts";
 import { updateAccountRoute } from "./update-account.ts";
 
 /** Signup and login: no token needed. */
 export const authRoutes: FastifyPluginAsyncZod = async (app) => {
   app.register(createAccount);
   app.register(login);
+  app.register(logout);
 };
 
 /**
@@ -33,4 +36,9 @@ export const accountProtectedRoutes: FastifyPluginAsyncZod = async (app) => {
   app.register(updateAccountRoute);
   app.register(deleteAccountRoute);
   app.register(generateAccountApiKey);
+};
+
+/** Account routes that act on the caller (no :id), so they skip the "own account" check above. */
+export const accountSelfRoutes: FastifyPluginAsyncZod = async (app) => {
+  app.register(getMe);
 };

@@ -1,6 +1,6 @@
 import type { FastifyPluginAsyncZod } from "fastify-type-provider-zod";
 
-import { accountProtectedRoutes, authRoutes } from "./accounts/index.ts";
+import { accountProtectedRoutes, accountSelfRoutes, authRoutes } from "./accounts/index.ts";
 import { applicationRoutes } from "./applications/index.ts";
 import { endpointRoutes } from "./endpoints/index.ts";
 import { eventRoutes } from "./events/index.ts";
@@ -17,6 +17,7 @@ export const registerRoutes: FastifyPluginAsyncZod = async (app) => {
     async (protectedApp) => {
       protectedApp.addHook("onRequest", protectedApp.authenticate);
 
+      protectedApp.register(accountSelfRoutes, { prefix: "/accounts" });
       protectedApp.register(accountProtectedRoutes, { prefix: "/accounts" });
       protectedApp.register(applicationRoutes, { prefix: "/applications" });
       protectedApp.register(endpointRoutes, { prefix: "/applications/:applicationId/endpoints" });
