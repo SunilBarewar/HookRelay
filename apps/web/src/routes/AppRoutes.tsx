@@ -2,6 +2,7 @@ import { Route, Routes } from "react-router";
 
 import { AppLayout } from "../components/layout/AppLayout.tsx";
 import { ApplicationsPage } from "../features/applications/ApplicationsPage.tsx";
+import { EndpointsPage } from "../features/endpoints/EndpointsPage.tsx";
 import { LoginPage } from "../features/auth/LoginPage.tsx";
 import { SignupPage } from "../features/auth/SignupPage.tsx";
 import { LandingPage } from "../features/landing/LandingPage.tsx";
@@ -24,6 +25,7 @@ export function AppRoutes() {
       <Route element={<RequireAuth />}>
         <Route element={<AppLayout />}>
           <Route path={paths.applications} element={<ApplicationsPage />} />
+          <Route path={paths.application} element={<EndpointsPage />} />
         </Route>
       </Route>
     </Routes>

@@ -1,5 +1,8 @@
+import { Link } from "react-router";
+
 import { IconButton } from "../../components/ui/IconButton.tsx";
 import { cx } from "../../lib/cx.ts";
+import { applicationPath } from "../../routes/paths.ts";
 import type { ApplicationResponse } from "../../lib/api/index.ts";
 
 const dateFormat = new Intl.DateTimeFormat(undefined, { dateStyle: "medium" });
@@ -34,7 +37,14 @@ export function ApplicationRow({
       className={cx("flex items-center gap-3 py-3 pr-3 pl-5", highlighted && "animate-highlight")}
     >
       <div className="min-w-0 flex-1">
-        <p className="truncate text-[15px] font-semibold text-slate-900">{application.name}</p>
+        <p className="truncate text-[15px] font-semibold">
+          <Link
+            to={applicationPath(application.id)}
+            className="rounded text-slate-900 hover:text-brand-700 hover:underline"
+          >
+            {application.name}
+          </Link>
+        </p>
         <p className="mt-0.5 text-[13px] text-slate-500">
           Created{" "}
           <time dateTime={application.createdAt}>

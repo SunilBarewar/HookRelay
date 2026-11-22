@@ -4,4 +4,9 @@ export const paths = {
   login: "/login",
   signup: "/signup",
   applications: "/applications",
+  /** Route pattern; build real links with `applicationPath(id)`. */
+  application: "/applications/:applicationId",
 } as const;
+
+/** The page for one application and its endpoints. */
+export const applicationPath = (applicationId: string) => `/applications/${applicationId}`;
